@@ -31,7 +31,7 @@ const initialFormData: QuoteFormData = {
   duration: '1-3months',
   furniture: { extraLarge: 0, large: 0, medium: 0, small: 0 },
   appliances: { extraLarge: 0, large: 0, medium: 0, small: 0 },
-  boxes: { luggage: 0, kitchen: 0, clothes: 0, books: 0, personal: 0 },
+  boxes: { luggage: 0, kitchen: 0, clothes: 0, booksPersonal: 0 },
   deliveryMethod: 'pickup',
   pickupLocation: '',
   pickupDate: null,

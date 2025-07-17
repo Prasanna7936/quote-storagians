@@ -20,8 +20,7 @@ export interface BoxItems {
   luggage: number; // Suitcases, Travel Bags
   kitchen: number; // Kitchen Utensils/Crockery
   clothes: number; // Cloths, Pillows, Bedsheets
-  books: number; // Books, Documents, Gift Articles
-  personal: number; // Shoes/Slippers/Sanitary Items
+  booksPersonal: number; // Books, Documents, Personal Items, Gift Articles
 }
 
 export type DeliveryMethod = 'pickup' | 'third-party' | 'self-drop';

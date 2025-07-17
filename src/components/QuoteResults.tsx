@@ -58,8 +58,7 @@ Boxes & Luggage:
 - Luggage: ${formData.boxes.luggage}
 - Kitchen Items: ${formData.boxes.kitchen}
 - Clothes & Bedding: ${formData.boxes.clothes}
-- Books & Documents: ${formData.boxes.books}
-- Personal Items: ${formData.boxes.personal}
+- Books/Document and Personal Items: ${formData.boxes.booksPersonal}
 
 PRICING:
 Monthly Rate: ₹${quote.monthlyRate.toLocaleString()}
@@ -220,8 +219,7 @@ Generated on: ${format(new Date(), 'PPP')}
                     <div>Luggage: {formData.boxes.luggage}</div>
                     <div>Kitchen: {formData.boxes.kitchen}</div>
                     <div>Clothes: {formData.boxes.clothes}</div>
-                    <div>Books: {formData.boxes.books}</div>
-                    <div>Personal: {formData.boxes.personal}</div>
+                    <div>Books/Personal: {formData.boxes.booksPersonal}</div>
                   </div>
                 </div>
               </CardContent>

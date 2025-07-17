@@ -19,8 +19,7 @@ const BOX_RATES = {
   luggage: 3,
   kitchen: 2,
   clothes: 2,
-  books: 2,
-  personal: 1
+  booksPersonal: 2
 };
 
 const BASE_RATE_PER_CUBIC_FOOT = 2.5; // ₹2.5 per cubic foot per month
@@ -58,8 +57,7 @@ export const calculateQuote = (formData: QuoteFormData): QuoteResult => {
     formData.boxes.luggage * BOX_RATES.luggage +
     formData.boxes.kitchen * BOX_RATES.kitchen +
     formData.boxes.clothes * BOX_RATES.clothes +
-    formData.boxes.books * BOX_RATES.books +
-    formData.boxes.personal * BOX_RATES.personal;
+    formData.boxes.booksPersonal * BOX_RATES.booksPersonal;
 
   const totalVolume = furnitureVolume + appliancesVolume + boxesVolume;
   

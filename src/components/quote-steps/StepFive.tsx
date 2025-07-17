@@ -30,16 +30,10 @@ export const StepFive = ({ formData, updateFormData }: StepFiveProps) => {
       examples: ['Clothing', 'Pillows', 'Bedsheets', 'Blankets']
     },
     {
-      key: 'books' as const,
-      title: 'Books & Documents',
-      description: 'Books, Documents, Gift Articles',
-      examples: ['Books', 'Documents', 'Papers', 'Gift Items']
-    },
-    {
-      key: 'personal' as const,
-      title: 'Personal Items',
-      description: 'Shoes/Slippers/Sanitary Items',
-      examples: ['Shoes', 'Slippers', 'Toiletries', 'Personal Care']
+      key: 'booksPersonal' as const,
+      title: 'Books/Document and Personal Items',
+      description: 'Books, Documents, Personal Items, Gift Articles',
+      examples: ['Books', 'Documents', 'Papers', 'Gift Items', 'Shoes', 'Slippers', 'Toiletries', 'Personal Care']
     }
   ];
 
