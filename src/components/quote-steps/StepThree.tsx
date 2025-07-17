@@ -65,12 +65,18 @@ export const StepThree = ({ formData, updateFormData }: StepThreeProps) => {
                   <div className="flex-1">
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <h3 className="font-semibold text-base cursor-help hover:text-primary transition-colors">
-                          {category.title}
-                        </h3>
+                        <div className="cursor-help">
+                          <h3 className="font-semibold text-base hover:text-primary transition-colors">
+                            {category.title}
+                          </h3>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Hover to see examples
+                          </p>
+                        </div>
                       </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-xs">
+                      <TooltipContent side="top" className="max-w-xs z-50 bg-popover border border-border">
                         <p className="text-sm">
+                          <strong>Examples:</strong><br />
                           {category.examples.join(', ')}
                         </p>
                       </TooltipContent>
