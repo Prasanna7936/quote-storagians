@@ -26,6 +26,10 @@ export interface BoxItems {
 
 export type DeliveryMethod = 'pickup' | 'third-party' | 'self-drop';
 
+export type BusinessGoodsType = 'new' | 'used';
+export type BusinessGoodsCategory = 'electronics' | 'fmcg' | 'office-furniture' | 'kitchen-hotel' | 'others';
+export type BusinessSpaceSize = 'compact' | 'standard' | 'large' | 'custom';
+
 export interface QuoteFormData {
   storageType: StorageType;
   duration: DurationType;
@@ -38,6 +42,11 @@ export interface QuoteFormData {
   customerName: string;
   customerPhone: string;
   customerEmail: string;
+  
+  // Business storage specific fields
+  businessGoodsType?: BusinessGoodsType;
+  businessGoodsCategory?: BusinessGoodsCategory;
+  businessSpaceSize?: BusinessSpaceSize;
 }
 
 export interface QuoteResult {

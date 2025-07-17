@@ -13,10 +13,14 @@ import { StepSix } from './quote-steps/StepSix';
 import { StepSeven } from './quote-steps/StepSeven';
 import { StepEight } from './quote-steps/StepEight';
 import { CallbackForm } from './quote-steps/CallbackForm';
+import { BusinessStepThree } from './quote-steps/BusinessStepThree';
+import { BusinessStepFour } from './quote-steps/BusinessStepFour';
+import { BusinessStepFive } from './quote-steps/BusinessStepFive';
 import { QuoteResults } from './QuoteResults';
 import { calculateQuote } from '@/utils/quoteCalculator';
 
 const TOTAL_STEPS = 8;
+const BUSINESS_TOTAL_STEPS = 7;
 
 const initialFormData: QuoteFormData = {
   storageType: 'household',
@@ -30,6 +34,9 @@ const initialFormData: QuoteFormData = {
   customerName: '',
   customerPhone: '',
   customerEmail: '',
+  businessGoodsType: undefined,
+  businessGoodsCategory: undefined,
+  businessSpaceSize: undefined,
 };
 
 export const QuoteGenerator = () => {
@@ -41,6 +48,9 @@ export const QuoteGenerator = () => {
     setFormData(prev => ({ ...prev, ...updates }));
   };
 
+  const isBusinessFlow = formData.storageType === 'business';
+  const maxSteps = isBusinessFlow ? BUSINESS_TOTAL_STEPS : TOTAL_STEPS;
+
   const nextStep = () => {
     // If callback is selected, skip to step 2 (callback form)
     if (formData.storageType === 'callback' && currentStep === 1) {
@@ -48,7 +58,7 @@ export const QuoteGenerator = () => {
       return;
     }
     
-    if (currentStep < TOTAL_STEPS) {
+    if (currentStep < maxSteps) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -90,16 +100,29 @@ export const QuoteGenerator = () => {
   };
 
   const getStepTitle = (step: number) => {
-    switch (step) {
-      case 1: return 'Storage Type';
-      case 2: return 'Duration';
-      case 3: return 'Furniture';
-      case 4: return 'Appliances';
-      case 5: return 'Boxes & Luggage';
-      case 6: return 'Delivery Method';
-      case 7: return 'Pickup Details';
-      case 8: return 'Your Information';
-      default: return 'Step';
+    if (isBusinessFlow) {
+      switch (step) {
+        case 1: return 'Storage Type';
+        case 2: return 'Duration';
+        case 3: return 'Goods Type';
+        case 4: return 'Goods Category';
+        case 5: return 'Space Size';
+        case 6: return 'Delivery Method';
+        case 7: return 'Your Information';
+        default: return 'Step';
+      }
+    } else {
+      switch (step) {
+        case 1: return 'Storage Type';
+        case 2: return 'Duration';
+        case 3: return 'Furniture';
+        case 4: return 'Appliances';
+        case 5: return 'Boxes & Luggage';
+        case 6: return 'Delivery Method';
+        case 7: return 'Pickup Details';
+        case 8: return 'Your Information';
+        default: return 'Step';
+      }
     }
   };
 
@@ -124,17 +147,17 @@ export const QuoteGenerator = () => {
         <div className="max-w-4xl mx-auto mb-8">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-medium text-muted-foreground">
-              Step {currentStep} of {TOTAL_STEPS}
+              Step {currentStep} of {maxSteps}
             </span>
             <span className="text-sm font-medium text-primary">
-              {Math.round((currentStep / TOTAL_STEPS) * 100)}% Complete
+              {Math.round((currentStep / maxSteps) * 100)}% Complete
             </span>
           </div>
-          <Progress value={(currentStep / TOTAL_STEPS) * 100} className="h-2" />
+          <Progress value={(currentStep / maxSteps) * 100} className="h-2" />
           
           {/* Step indicators */}
           <div className="flex justify-between mt-4">
-            {Array.from({ length: TOTAL_STEPS }, (_, i) => {
+            {Array.from({ length: maxSteps }, (_, i) => {
               const step = i + 1;
               const Icon = getStepIcon(step);
               const isActive = step === currentStep;
@@ -184,37 +207,70 @@ export const QuoteGenerator = () => {
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 3 && (
-              <StepThree 
+            {/* Business Flow Steps */}
+            {currentStep === 3 && isBusinessFlow && (
+              <BusinessStepThree 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 4 && (
-              <StepFour 
+            {currentStep === 4 && isBusinessFlow && (
+              <BusinessStepFour 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 5 && (
-              <StepFive 
+            {currentStep === 5 && isBusinessFlow && (
+              <BusinessStepFive 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 6 && (
+            {currentStep === 6 && isBusinessFlow && (
               <StepSix 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 7 && (
+            {currentStep === 7 && isBusinessFlow && (
+              <StepEight 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            
+            {/* Household Flow Steps */}
+            {currentStep === 3 && !isBusinessFlow && (
+              <StepThree 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 4 && !isBusinessFlow && (
+              <StepFour 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 5 && !isBusinessFlow && (
+              <StepFive 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 6 && !isBusinessFlow && (
+              <StepSix 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 7 && !isBusinessFlow && (
               <StepSeven 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 8 && (
+            {currentStep === 8 && !isBusinessFlow && (
               <StepEight 
                 formData={formData} 
                 updateFormData={updateFormData} 
@@ -233,7 +289,7 @@ export const QuoteGenerator = () => {
                   Previous
                 </Button>
                 
-                {currentStep === TOTAL_STEPS ? (
+                {currentStep === maxSteps ? (
                   <Button 
                     variant="wizard" 
                     onClick={generateQuote}
