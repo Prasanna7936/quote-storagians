@@ -1,0 +1,27 @@
+{
+  "appId": "app.lovable.e40968496fad448fb2c8f20eb6d08a69",
+  "appName": "Storage Quote Generator",
+  "webDir": "dist",
+  "server": {
+    "url": "https://e4096849-6fad-448f-b2c8-f20eb6d08a69.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#3b82f6",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false
+    }
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": "",
+      "keystoreAlias": ""
+    }
+  },
+  "ios": {
+    "scheme": "Storage Quote Generator"
+  }
+}
