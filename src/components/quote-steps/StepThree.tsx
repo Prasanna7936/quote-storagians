@@ -1,7 +1,6 @@
 import { QuoteFormData } from '@/types/quote';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Minus, Plus, Sofa } from 'lucide-react';
 
 interface StepThreeProps {
@@ -48,68 +47,50 @@ export const StepThree = ({ formData, updateFormData }: StepThreeProps) => {
   };
 
   return (
-    <TooltipProvider>
-      <div className="space-y-3">
-        <div className="text-center mb-4">
-          <Sofa className="w-10 h-10 mx-auto mb-3 text-primary" />
-          <p className="text-muted-foreground text-sm">
-            How many furniture items do you need to store?
-          </p>
-        </div>
-
-        <div className="grid gap-3">
-          {furnitureCategories.map((category) => (
-            <Card key={category.key} className="shadow-soft">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="cursor-help">
-                          <h3 className="font-semibold text-base hover:text-primary transition-colors">
-                            {category.title}
-                          </h3>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Hover to see examples
-                          </p>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-xs z-50 bg-popover border border-border">
-                        <p className="text-sm">
-                          <strong>Examples:</strong><br />
-                          {category.examples.join(', ')}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => updateQuantity(category.key, -1)}
-                      disabled={formData.furniture[category.key] === 0}
-                    >
-                      <Minus className="w-3 h-3" />
-                    </Button>
-                    <span className="w-8 text-center font-semibold">
-                      {formData.furniture[category.key]}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => updateQuantity(category.key, 1)}
-                    >
-                      <Plus className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+    <div className="space-y-3">
+      <div className="text-center mb-4">
+        <Sofa className="w-10 h-10 mx-auto mb-3 text-primary" />
+        <p className="text-muted-foreground text-sm">
+          How many furniture items do you need to store?
+        </p>
       </div>
-    </TooltipProvider>
+
+      <div className="grid gap-3">
+        {furnitureCategories.map((category) => (
+          <Card key={category.key} className="shadow-soft">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">{category.title}</CardTitle>
+              <p className="text-sm text-muted-foreground">{category.description}</p>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => updateQuantity(category.key, -1)}
+                    disabled={formData.furniture[category.key] === 0}
+                  >
+                    <Minus className="w-3 h-3" />
+                  </Button>
+                  <span className="w-8 text-center font-semibold">
+                    {formData.furniture[category.key]}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => updateQuantity(category.key, 1)}
+                  >
+                    <Plus className="w-3 h-3" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
   );
 };
