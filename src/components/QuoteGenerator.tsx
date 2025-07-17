@@ -228,7 +228,7 @@ export const QuoteGenerator = () => {
               />
             )}
             {currentStep === 2 && formData.storageType === 'callback' && (
-              <CallbackForm onSubmit={handleCallbackSubmit} />
+              <CallbackForm onSubmit={handleCallbackSubmit} onCancel={resetForm} />
             )}
             {currentStep === 2 && formData.storageType !== 'callback' && (
               <StepTwo 

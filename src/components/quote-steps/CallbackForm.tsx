@@ -9,9 +9,10 @@ import { useToast } from '@/hooks/use-toast';
 
 interface CallbackFormProps {
   onSubmit: () => void;
+  onCancel: () => void;
 }
 
-export const CallbackForm = ({ onSubmit }: CallbackFormProps) => {
+export const CallbackForm = ({ onSubmit, onCancel }: CallbackFormProps) => {
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
@@ -118,14 +119,25 @@ export const CallbackForm = ({ onSubmit }: CallbackFormProps) => {
               />
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full mt-6" 
-              size="lg"
-              variant="gradient"
-            >
-              Submit Request
-            </Button>
+            <div className="flex gap-4 mt-6">
+              <Button 
+                type="button"
+                variant="outline" 
+                className="flex-1" 
+                size="lg"
+                onClick={onCancel}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                className="flex-1" 
+                size="lg"
+                variant="gradient"
+              >
+                Submit Request
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
