@@ -36,14 +36,14 @@ export const StepOne = ({ formData, updateFormData }: StepOneProps) => {
   ];
 
   return (
-    <div className="space-y-3">
-      <div className="text-center mb-4">
+    <div className="space-y-2">
+      <div className="text-center mb-3">
         <p className="text-muted-foreground text-sm">
           Select the type of storage you need
         </p>
       </div>
 
-      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-2 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
         {storageOptions.map((option) => {
           const Icon = option.icon;
           const isSelected = formData.storageType === option.value;
