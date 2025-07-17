@@ -155,12 +155,21 @@ export const QuoteGenerator = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-4">
-            Instant Storage Quote
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Get an instant quote for your storage needs in just a few simple steps
-          </p>
+          <img 
+            src="/lovable-uploads/bd6d9619-fe1c-4b83-9289-e6fc65d935ba.png" 
+            alt="Storagians Logo" 
+            className="h-16 mx-auto mb-6"
+          />
+          {currentStep === 1 && (
+            <>
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-4">
+                Get Quote
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Get an instant quote for your storage needs
+              </p>
+            </>
+          )}
         </div>
 
         {/* Progress Bar */}
