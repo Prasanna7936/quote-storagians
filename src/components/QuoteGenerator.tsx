@@ -12,6 +12,7 @@ import { StepFive } from './quote-steps/StepFive';
 import { StepSix } from './quote-steps/StepSix';
 import { StepSeven } from './quote-steps/StepSeven';
 import { StepEight } from './quote-steps/StepEight';
+import { CallbackForm } from './quote-steps/CallbackForm';
 import { QuoteResults } from './QuoteResults';
 import { calculateQuote } from '@/utils/quoteCalculator';
 
@@ -41,6 +42,12 @@ export const QuoteGenerator = () => {
   };
 
   const nextStep = () => {
+    // If callback is selected, skip to step 2 (callback form)
+    if (formData.storageType === 'callback' && currentStep === 1) {
+      setCurrentStep(2);
+      return;
+    }
+    
     if (currentStep < TOTAL_STEPS) {
       setCurrentStep(prev => prev + 1);
     }
@@ -61,6 +68,11 @@ export const QuoteGenerator = () => {
     setCurrentStep(1);
     setFormData(initialFormData);
     setQuote(null);
+  };
+
+  const handleCallbackSubmit = () => {
+    // Reset form and go back to step 1
+    resetForm();
   };
 
   const getStepIcon = (step: number) => {
@@ -153,7 +165,7 @@ export const QuoteGenerator = () => {
         <Card className="max-w-4xl mx-auto shadow-medium animate-slide-up">
           <CardHeader className="text-center border-b">
             <CardTitle className="text-2xl font-semibold">
-              {getStepTitle(currentStep)}
+              {formData.storageType === 'callback' && currentStep === 2 ? 'Request Call Back' : getStepTitle(currentStep)}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 md:p-8">
@@ -163,7 +175,10 @@ export const QuoteGenerator = () => {
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 2 && (
+            {currentStep === 2 && formData.storageType === 'callback' && (
+              <CallbackForm onSubmit={handleCallbackSubmit} />
+            )}
+            {currentStep === 2 && formData.storageType !== 'callback' && (
               <StepTwo 
                 formData={formData} 
                 updateFormData={updateFormData} 
@@ -206,37 +221,39 @@ export const QuoteGenerator = () => {
               />
             )}
 
-            {/* Navigation Buttons */}
-            <div className="flex justify-between mt-8 pt-6 border-t">
-              <Button 
-                variant="outline" 
-                onClick={prevStep}
-                disabled={currentStep === 1}
-                size="lg"
-              >
-                Previous
-              </Button>
-              
-              {currentStep === TOTAL_STEPS ? (
+            {/* Navigation Buttons - Hide for callback form */}
+            {!(formData.storageType === 'callback' && currentStep === 2) && (
+              <div className="flex justify-between mt-8 pt-6 border-t">
                 <Button 
-                  variant="wizard" 
-                  onClick={generateQuote}
-                  size="lg"
-                  className="min-w-32"
-                >
-                  <Calculator className="w-4 h-4 mr-2" />
-                  Get Quote
-                </Button>
-              ) : (
-                <Button 
-                  variant="gradient" 
-                  onClick={nextStep}
+                  variant="outline" 
+                  onClick={prevStep}
+                  disabled={currentStep === 1}
                   size="lg"
                 >
-                  Next Step
+                  Previous
                 </Button>
-              )}
-            </div>
+                
+                {currentStep === TOTAL_STEPS ? (
+                  <Button 
+                    variant="wizard" 
+                    onClick={generateQuote}
+                    size="lg"
+                    className="min-w-32"
+                  >
+                    <Calculator className="w-4 h-4 mr-2" />
+                    Get Quote
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="gradient" 
+                    onClick={nextStep}
+                    size="lg"
+                  >
+                    Next Step
+                  </Button>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

@@ -1,4 +1,4 @@
-export type StorageType = 'household' | 'business' | 'document';
+export type StorageType = 'household' | 'business' | 'document' | 'callback';
 
 export type DurationType = '<1month' | '1-3months' | '3-6months' | '>6months';
 

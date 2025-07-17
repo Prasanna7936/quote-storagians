@@ -1,6 +1,6 @@
 import { QuoteFormData, StorageType } from '@/types/quote';
 import { Card, CardContent } from '@/components/ui/card';
-import { Home, Building2, FileText } from 'lucide-react';
+import { Home, Building2, FileText, Phone } from 'lucide-react';
 
 interface StepOneProps {
   formData: QuoteFormData;
@@ -26,6 +26,12 @@ export const StepOne = ({ formData, updateFormData }: StepOneProps) => {
       label: 'Document Storage',
       description: 'Files, records, and important documents',
       icon: FileText
+    },
+    {
+      value: 'callback',
+      label: 'Request Call Back',
+      description: 'Our team will contact you shortly',
+      icon: Phone
     }
   ];
 
@@ -37,7 +43,7 @@ export const StepOne = ({ formData, updateFormData }: StepOneProps) => {
         </p>
       </div>
 
-      <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {storageOptions.map((option) => {
           const Icon = option.icon;
           const isSelected = formData.storageType === option.value;
