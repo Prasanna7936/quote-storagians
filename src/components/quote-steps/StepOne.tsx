@@ -30,14 +30,14 @@ export const StepOne = ({ formData, updateFormData }: StepOneProps) => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <p className="text-muted-foreground">
-          Select the type of storage you need to get started with your quote
+    <div className="space-y-3">
+      <div className="text-center mb-4">
+        <p className="text-muted-foreground text-sm">
+          Select the type of storage you need
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
         {storageOptions.map((option) => {
           const Icon = option.icon;
           const isSelected = formData.storageType === option.value;
@@ -52,19 +52,19 @@ export const StepOne = ({ formData, updateFormData }: StepOneProps) => {
               }`}
               onClick={() => updateFormData({ storageType: option.value })}
             >
-              <CardContent className="p-6 text-center">
-                <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
+              <CardContent className="p-4 text-center">
+                <div className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center ${
                   isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted'
                 }`}>
-                  <Icon className="w-8 h-8" />
+                  <Icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">{option.label}</h3>
-                <p className="text-sm text-muted-foreground">{option.description}</p>
+                <h3 className="font-semibold text-base mb-1">{option.label}</h3>
+                <p className="text-xs text-muted-foreground">{option.description}</p>
                 
                 {isSelected && (
-                  <div className="mt-4">
-                    <div className="w-6 h-6 mx-auto bg-primary rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="mt-3">
+                    <div className="w-5 h-5 mx-auto bg-primary rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>

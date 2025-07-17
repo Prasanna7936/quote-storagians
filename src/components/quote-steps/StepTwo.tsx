@@ -33,15 +33,15 @@ export const StepTwo = ({ formData, updateFormData }: StepTwoProps) => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <Clock className="w-12 h-12 mx-auto mb-4 text-primary" />
-        <p className="text-muted-foreground">
+    <div className="space-y-3">
+      <div className="text-center mb-4">
+        <Clock className="w-10 h-10 mx-auto mb-3 text-primary" />
+        <p className="text-muted-foreground text-sm">
           How long do you plan to store your items?
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
         {durationOptions.map((option) => {
           const isSelected = formData.duration === option.value;
           
@@ -60,7 +60,7 @@ export const StepTwo = ({ formData, updateFormData }: StepTwoProps) => {
                   Popular
                 </div>
               )}
-              <CardContent className="p-6">
+              <CardContent className="p-4">
                 <div className="flex items-center space-x-3">
                   <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
                     isSelected ? 'border-primary bg-primary' : 'border-muted-foreground'
