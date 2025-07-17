@@ -16,11 +16,15 @@ import { CallbackForm } from './quote-steps/CallbackForm';
 import { BusinessStepThree } from './quote-steps/BusinessStepThree';
 import { BusinessStepFour } from './quote-steps/BusinessStepFour';
 import { BusinessStepFive } from './quote-steps/BusinessStepFive';
+import { DocumentStepThree } from './quote-steps/DocumentStepThree';
+import { DocumentStepFour } from './quote-steps/DocumentStepFour';
+import { DocumentStepFive } from './quote-steps/DocumentStepFive';
 import { QuoteResults } from './QuoteResults';
 import { calculateQuote } from '@/utils/quoteCalculator';
 
 const TOTAL_STEPS = 8;
 const BUSINESS_TOTAL_STEPS = 7;
+const DOCUMENT_TOTAL_STEPS = 8;
 
 const initialFormData: QuoteFormData = {
   storageType: 'household',
@@ -37,6 +41,9 @@ const initialFormData: QuoteFormData = {
   businessGoodsType: undefined,
   businessGoodsCategory: undefined,
   businessSpaceSize: undefined,
+  documentBoxRequirement: undefined,
+  documentStorageType: undefined,
+  documentBoxCount: undefined,
 };
 
 export const QuoteGenerator = () => {
@@ -49,7 +56,8 @@ export const QuoteGenerator = () => {
   };
 
   const isBusinessFlow = formData.storageType === 'business';
-  const maxSteps = isBusinessFlow ? BUSINESS_TOTAL_STEPS : TOTAL_STEPS;
+  const isDocumentFlow = formData.storageType === 'document';
+  const maxSteps = isBusinessFlow ? BUSINESS_TOTAL_STEPS : isDocumentFlow ? DOCUMENT_TOTAL_STEPS : TOTAL_STEPS;
 
   const nextStep = () => {
     // If callback is selected, skip to step 2 (callback form)
@@ -109,6 +117,18 @@ export const QuoteGenerator = () => {
         case 5: return 'Space Size';
         case 6: return 'Delivery Method';
         case 7: return 'Your Information';
+        default: return 'Step';
+      }
+    } else if (isDocumentFlow) {
+      switch (step) {
+        case 1: return 'Storage Type';
+        case 2: return 'Duration';
+        case 3: return 'Box Requirement';
+        case 4: return 'Storage Type';
+        case 5: return 'Number of Boxes';
+        case 6: return 'Delivery Method';
+        case 7: return 'Pickup Details';
+        case 8: return 'Your Information';
         default: return 'Step';
       }
     } else {
@@ -239,38 +259,76 @@ export const QuoteGenerator = () => {
               />
             )}
             
-            {/* Household Flow Steps */}
-            {currentStep === 3 && !isBusinessFlow && (
-              <StepThree 
+            {/* Document Flow Steps */}
+            {currentStep === 3 && isDocumentFlow && (
+              <DocumentStepThree 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 4 && !isBusinessFlow && (
-              <StepFour 
+            {currentStep === 4 && isDocumentFlow && (
+              <DocumentStepFour 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 5 && !isBusinessFlow && (
-              <StepFive 
+            {currentStep === 5 && isDocumentFlow && (
+              <DocumentStepFive 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 6 && !isBusinessFlow && (
+            {currentStep === 6 && isDocumentFlow && (
               <StepSix 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 7 && !isBusinessFlow && (
+            {currentStep === 7 && isDocumentFlow && (
               <StepSeven 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 8 && !isBusinessFlow && (
+            {currentStep === 8 && isDocumentFlow && (
+              <StepEight 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            
+            {/* Household Flow Steps */}
+            {currentStep === 3 && !isBusinessFlow && !isDocumentFlow && (
+              <StepThree 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 4 && !isBusinessFlow && !isDocumentFlow && (
+              <StepFour 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 5 && !isBusinessFlow && !isDocumentFlow && (
+              <StepFive 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 6 && !isBusinessFlow && !isDocumentFlow && (
+              <StepSix 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 7 && !isBusinessFlow && !isDocumentFlow && (
+              <StepSeven 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 8 && !isBusinessFlow && !isDocumentFlow && (
               <StepEight 
                 formData={formData} 
                 updateFormData={updateFormData} 
