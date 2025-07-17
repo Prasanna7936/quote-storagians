@@ -25,7 +25,7 @@ export const StepFive = ({ formData, updateFormData }: StepFiveProps) => {
     },
     {
       key: 'clothes' as const,
-      title: 'Clothes and Bedding',
+      title: 'Boxes Cloths and Bedding',
       description: 'Cloths, Pillows, Bedsheets',
       examples: ['Clothing', 'Pillows', 'Bedsheets', 'Blankets']
     },
