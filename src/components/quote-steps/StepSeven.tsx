@@ -1,8 +1,13 @@
 import { QuoteFormData } from '@/types/quote';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User, Phone, Mail } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { MapPin, Calendar as CalendarIcon, Truck } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface StepSevenProps {
   formData: QuoteFormData;
@@ -13,86 +18,84 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <User className="w-12 h-12 mx-auto mb-4 text-primary" />
-        <h3 className="text-xl font-semibold mb-2">Almost Done!</h3>
+        <Truck className="w-12 h-12 mx-auto mb-4 text-primary" />
         <p className="text-muted-foreground">
-          Please provide your contact information to receive your instant quote
+          When and where should we pick up your items?
         </p>
       </div>
 
-      <div className="max-w-2xl mx-auto">
-        <Card className="shadow-soft">
-          <CardContent className="p-6 space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="customer-name" className="flex items-center gap-2">
-                <User className="w-4 h-4" />
-                Full Name *
-              </Label>
-              <Input
-                id="customer-name"
-                placeholder="Enter your full name"
-                value={formData.customerName}
-                onChange={(e) => updateFormData({ customerName: e.target.value })}
-                className="w-full"
-                required
-              />
-            </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Pickup Location */}
+        <div className="space-y-2">
+          <Label htmlFor="pickup-location" className="flex items-center gap-2">
+            <MapPin className="w-4 h-4" />
+            Pickup Location
+          </Label>
+          <Input
+            id="pickup-location"
+            type="text"
+            placeholder="Enter your address"
+            value={formData.pickupLocation}
+            onChange={(e) => updateFormData({ pickupLocation: e.target.value })}
+            className="text-base"
+          />
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="customer-phone" className="flex items-center gap-2">
-                <Phone className="w-4 h-4" />
-                Phone Number *
-              </Label>
-              <Input
-                id="customer-phone"
-                placeholder="Enter your phone number"
-                value={formData.customerPhone}
-                onChange={(e) => updateFormData({ customerPhone: e.target.value })}
-                className="w-full"
-                type="tel"
-                required
+        {/* Pickup Date */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2">
+            <CalendarIcon className="w-4 h-4" />
+            Pickup Date
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !formData.pickupDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {formData.pickupDate ? (
+                  format(formData.pickupDate, "PPP")
+                ) : (
+                  <span>Pick a date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={formData.pickupDate || undefined}
+                onSelect={(date) => updateFormData({ pickupDate: date || null })}
+                disabled={(date) =>
+                  date < new Date() || date < new Date("1900-01-01")
+                }
+                initialFocus
+                className="pointer-events-auto"
               />
-              <p className="text-xs text-muted-foreground">
-                We'll send your quote via WhatsApp to this number
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="customer-email" className="flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                Email Address *
-              </Label>
-              <Input
-                id="customer-email"
-                placeholder="Enter your email address"
-                value={formData.customerEmail}
-                onChange={(e) => updateFormData({ customerEmail: e.target.value })}
-                className="w-full"
-                type="email"
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Your detailed quote will be emailed to this address
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="mt-6 bg-success/10 border border-success/20 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <div className="w-5 h-5 rounded-full bg-success flex items-center justify-center mt-0.5">
-              <span className="text-white text-xs">✓</span>
-            </div>
-            <div>
-              <h4 className="font-medium text-success-foreground mb-1">Privacy & Security</h4>
-              <p className="text-sm text-muted-foreground">
-                Your information is secure and will only be used to provide you with storage quotes 
-                and related services. We never share your data with third parties.
-              </p>
-            </div>
-          </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
+
+      <Card className="bg-muted/50">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+            <div className="text-sm text-muted-foreground">
+              <p className="font-medium mb-1">Pickup Information:</p>
+              <ul className="space-y-1 text-xs">
+                <li>• Our team will contact you to confirm the pickup time</li>
+                <li>• Please ensure easy access to your items</li>
+                <li>• We provide professional packing materials</li>
+                <li>• Pickup is usually completed within 2-4 hours</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

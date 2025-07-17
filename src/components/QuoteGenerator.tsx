@@ -11,10 +11,11 @@ import { StepFour } from './quote-steps/StepFour';
 import { StepFive } from './quote-steps/StepFive';
 import { StepSix } from './quote-steps/StepSix';
 import { StepSeven } from './quote-steps/StepSeven';
+import { StepEight } from './quote-steps/StepEight';
 import { QuoteResults } from './QuoteResults';
 import { calculateQuote } from '@/utils/quoteCalculator';
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8;
 
 const initialFormData: QuoteFormData = {
   storageType: 'household',
@@ -22,6 +23,7 @@ const initialFormData: QuoteFormData = {
   furniture: { extraLarge: 0, large: 0, medium: 0, small: 0 },
   appliances: { extraLarge: 0, large: 0, medium: 0, small: 0 },
   boxes: { luggage: 0, kitchen: 0, clothes: 0, books: 0, personal: 0 },
+  deliveryMethod: 'pickup',
   pickupLocation: '',
   pickupDate: null,
   customerName: '',
@@ -69,7 +71,8 @@ export const QuoteGenerator = () => {
       case 4: return Package;
       case 5: return Package;
       case 6: return Truck;
-      case 7: return Calculator;
+      case 7: return Truck;
+      case 8: return Calculator;
       default: return Package;
     }
   };
@@ -81,8 +84,9 @@ export const QuoteGenerator = () => {
       case 3: return 'Furniture';
       case 4: return 'Appliances';
       case 5: return 'Boxes & Luggage';
-      case 6: return 'Pickup Details';
-      case 7: return 'Your Information';
+      case 6: return 'Delivery Method';
+      case 7: return 'Pickup Details';
+      case 8: return 'Your Information';
       default: return 'Step';
     }
   };
@@ -191,6 +195,12 @@ export const QuoteGenerator = () => {
             )}
             {currentStep === 7 && (
               <StepSeven 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 8 && (
+              <StepEight 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />

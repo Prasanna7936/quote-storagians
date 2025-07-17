@@ -1,13 +1,6 @@
-import { QuoteFormData } from '@/types/quote';
+import { DeliveryMethod, QuoteFormData } from '@/types/quote';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { MapPin, Calendar as CalendarIcon, Truck } from 'lucide-react';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { Truck, Package, User } from 'lucide-react';
 
 interface StepSixProps {
   formData: QuoteFormData;
@@ -15,91 +8,86 @@ interface StepSixProps {
 }
 
 export const StepSix = ({ formData, updateFormData }: StepSixProps) => {
+  const deliveryOptions: { 
+    value: DeliveryMethod; 
+    label: string; 
+    description: string; 
+    icon: typeof Truck;
+    details: string;
+  }[] = [
+    {
+      value: 'pickup',
+      label: 'Pickup by Us',
+      description: 'Our team will pick-up the goods from your location',
+      details: 'Complete door-to-door service with professional packing',
+      icon: Truck
+    },
+    {
+      value: 'third-party',
+      label: 'Third Party Drop',
+      description: 'You arrange drop-off via Porter/NoBroker',
+      details: 'Only packed items will be accepted at our facility',
+      icon: Package
+    },
+    {
+      value: 'self-drop',
+      label: 'Self-Drop',
+      description: 'You bring the goods yourself',
+      details: 'Our team will assist with packing at the warehouse',
+      icon: User
+    }
+  ];
+
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <Truck className="w-12 h-12 mx-auto mb-4 text-primary" />
-        <p className="text-muted-foreground">
-          When and where should we pick up your items?
+    <div className="space-y-3">
+      <div className="text-center mb-4">
+        <p className="text-muted-foreground text-sm">
+          How would you like to move the goods to storage?
         </p>
       </div>
 
-      <div className="max-w-2xl mx-auto space-y-6">
-        <Card className="shadow-soft">
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="pickup-location" className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  Pickup Location
-                </Label>
-                <Input
-                  id="pickup-location"
-                  placeholder="Enter your pickup address"
-                  value={formData.pickupLocation}
-                  onChange={(e) => updateFormData({ pickupLocation: e.target.value })}
-                  className="w-full"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Please provide the complete address including city and pincode
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2">
-                  <CalendarIcon className="w-4 h-4" />
-                  Preferred Pickup Date
-                </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !formData.pickupDate && "text-muted-foreground"
+      <div className="grid gap-3 grid-cols-1">
+        {deliveryOptions.map((option) => {
+          const Icon = option.icon;
+          const isSelected = formData.deliveryMethod === option.value;
+          
+          return (
+            <Card 
+              key={option.value}
+              className={`cursor-pointer transition-all duration-200 hover:scale-[1.01] ${
+                isSelected 
+                  ? 'ring-2 ring-primary bg-primary/5 shadow-medium' 
+                  : 'hover:shadow-soft'
+              }`}
+              onClick={() => updateFormData({ deliveryMethod: option.value })}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-4">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                  }`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-base">{option.label}</h3>
+                      {isSelected && (
+                        <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                          <svg className="w-3 h-3 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
                       )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData.pickupDate ? (
-                        format(formData.pickupDate, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={formData.pickupDate || undefined}
-                      onSelect={(date) => updateFormData({ pickupDate: date || null })}
-                      disabled={(date) => date < new Date()}
-                      initialFocus
-                      className={cn("p-3 pointer-events-auto")}
-                    />
-                  </PopoverContent>
-                </Popover>
-                <p className="text-xs text-muted-foreground">
-                  Select your preferred pickup date (must be a future date)
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="bg-info/10 border border-info/20 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <div className="w-5 h-5 rounded-full bg-info flex items-center justify-center mt-0.5">
-              <span className="text-white text-xs">i</span>
-            </div>
-            <div>
-              <h4 className="font-medium text-info-foreground mb-1">Pickup Information</h4>
-              <p className="text-sm text-muted-foreground">
-                Our team will contact you to confirm the pickup time and any specific requirements. 
-                Pickup is usually scheduled between 9 AM to 6 PM on working days.
-              </p>
-            </div>
-          </div>
-        </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">{option.description}</p>
+                    <p className="text-xs text-muted-foreground mt-1 italic">{option.details}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

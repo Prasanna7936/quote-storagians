@@ -24,12 +24,15 @@ export interface BoxItems {
   personal: number; // Shoes/Slippers/Sanitary Items
 }
 
+export type DeliveryMethod = 'pickup' | 'third-party' | 'self-drop';
+
 export interface QuoteFormData {
   storageType: StorageType;
   duration: DurationType;
   furniture: FurnitureItems;
   appliances: ApplianceItems;
   boxes: BoxItems;
+  deliveryMethod: DeliveryMethod;
   pickupLocation: string;
   pickupDate: Date | null;
   customerName: string;
