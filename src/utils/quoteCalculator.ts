@@ -33,7 +33,7 @@ const VEHICLE_OPTIONS = [
   { minVolume: 1401, maxVolume: Infinity, name: 'Eicher 17ft', cost: 3600 }
 ];
 
-const LABOUR_COST_PER_PERSON = 400;
+const LABOUR_COST_PER_PERSON = 800;
 
 // Old constants for backward compatibility with business/document storage
 const FURNITURE_RATES = {
