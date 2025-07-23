@@ -309,6 +309,90 @@ Please contact me for booking.`;
           </div>
         </div>
 
+        {/* Prepay Discount Section */}
+        <div className="max-w-4xl mx-auto mt-8">
+          <Card className="shadow-strong">
+            <CardHeader className="text-center bg-gradient-secondary text-primary-foreground rounded-t-lg">
+              <CardTitle className="text-2xl font-bold">Prepay & Save!</CardTitle>
+              <p className="text-sm opacity-90">Pay in advance and get exclusive discounts</p>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid gap-4 md:grid-cols-3">
+                {/* 3 Months */}
+                <div className="bg-muted/30 rounded-lg p-4 text-center border-2 hover:border-primary/50 transition-colors">
+                  <div className="text-lg font-bold text-primary mb-2">3 Months Advance</div>
+                  <div className="text-3xl font-bold text-success mb-2">5% OFF</div>
+                  {formData.storageType === 'household' && quote.rentalCharges ? (
+                    <div className="text-sm text-muted-foreground">
+                      <div>Monthly: ₹{Math.round(quote.rentalCharges * 0.95).toLocaleString()}</div>
+                      <div className="font-medium text-success">
+                        Save ₹{Math.round(quote.rentalCharges * 3 * 0.05).toLocaleString()}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">
+                      <div>Monthly: ₹{Math.round(quote.monthlyRate * 0.95).toLocaleString()}</div>
+                      <div className="font-medium text-success">
+                        Save ₹{Math.round(quote.monthlyRate * 3 * 0.05).toLocaleString()}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 6 Months */}
+                <div className="bg-muted/30 rounded-lg p-4 text-center border-2 border-primary/70 relative overflow-hidden">
+                  <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
+                    Popular
+                  </div>
+                  <div className="text-lg font-bold text-primary mb-2">6 Months Advance</div>
+                  <div className="text-3xl font-bold text-success mb-2">10% OFF</div>
+                  {formData.storageType === 'household' && quote.rentalCharges ? (
+                    <div className="text-sm text-muted-foreground">
+                      <div>Monthly: ₹{Math.round(quote.rentalCharges * 0.9).toLocaleString()}</div>
+                      <div className="font-medium text-success">
+                        Save ₹{Math.round(quote.rentalCharges * 6 * 0.1).toLocaleString()}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">
+                      <div>Monthly: ₹{Math.round(quote.monthlyRate * 0.9).toLocaleString()}</div>
+                      <div className="font-medium text-success">
+                        Save ₹{Math.round(quote.monthlyRate * 6 * 0.1).toLocaleString()}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 12 Months */}
+                <div className="bg-muted/30 rounded-lg p-4 text-center border-2 hover:border-primary/50 transition-colors">
+                  <div className="text-lg font-bold text-primary mb-2">12 Months Advance</div>
+                  <div className="text-3xl font-bold text-success mb-2">15% OFF</div>
+                  {formData.storageType === 'household' && quote.rentalCharges ? (
+                    <div className="text-sm text-muted-foreground">
+                      <div>Monthly: ₹{Math.round(quote.rentalCharges * 0.85).toLocaleString()}</div>
+                      <div className="font-medium text-success">
+                        Save ₹{Math.round(quote.rentalCharges * 12 * 0.15).toLocaleString()}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">
+                      <div>Monthly: ₹{Math.round(quote.monthlyRate * 0.85).toLocaleString()}</div>
+                      <div className="font-medium text-success">
+                        Save ₹{Math.round(quote.monthlyRate * 12 * 0.15).toLocaleString()}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="mt-4 text-center">
+                <p className="text-sm text-muted-foreground">
+                  * Discounts apply to monthly rental charges only
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         <div className="max-w-4xl mx-auto mt-8 text-center">
           <div className="bg-success/10 border border-success/20 rounded-lg p-6">
             <h3 className="text-xl font-semibold mb-2 text-success">What's Next?</h3>
