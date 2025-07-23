@@ -385,8 +385,9 @@ const calculateDocumentQuote = (formData: QuoteFormData): QuoteResult => {
       durationKey = '<1M';
   }
   
-  // Get box rate from lookup table
-  const boxRate = DOCUMENT_RATE_MATRIX[storageType][durationKey][boxCountRange];
+  // Get box rate from lookup table (handle 100+ -> 101+ mapping)
+  const rateKey = boxCountRange === '100+' ? '101+' : boxCountRange;
+  const boxRate = DOCUMENT_RATE_MATRIX[storageType][durationKey][rateKey];
   
   // Use fixed box counts based on selected range
   let boxCount: number;
