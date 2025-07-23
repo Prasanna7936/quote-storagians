@@ -60,10 +60,10 @@ const BOX_RATES = {
 const BASE_RATE_PER_CUBIC_FOOT = 2.5;
 
 const DURATION_MULTIPLIERS = {
-  '<1month': 1.5,
   '1-3months': 1.0,
   '3-6months': 0.9,
-  '>6months': 0.8
+  '6-12months': 0.8,
+  '>12months': 0.7
 };
 
 const STORAGE_TYPE_MULTIPLIERS = {
@@ -110,17 +110,17 @@ export const calculateQuote = (formData: QuoteFormData): QuoteResult => {
   
   let totalCost = monthlyRate;
   switch (formData.duration) {
-    case '<1month':
-      totalCost = monthlyRate;
-      break;
     case '1-3months':
       totalCost = monthlyRate * 2.5;
       break;
     case '3-6months':
       totalCost = monthlyRate * 4.5;
       break;
-    case '>6months':
-      totalCost = monthlyRate * 8;
+    case '6-12months':
+      totalCost = monthlyRate * 9;
+      break;
+    case '>12months':
+      totalCost = monthlyRate * 15;
       break;
   }
 

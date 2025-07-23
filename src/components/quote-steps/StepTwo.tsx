@@ -10,24 +10,24 @@ interface StepTwoProps {
 export const StepTwo = ({ formData, updateFormData }: StepTwoProps) => {
   const durationOptions: { value: DurationType; label: string; description: string; popular?: boolean }[] = [
     {
-      value: '<1month',
-      label: 'Less than 1 month',
+      value: '1-3months',
+      label: '1-3 Months',
       description: 'Short-term storage'
     },
     {
-      value: '1-3months',
-      label: '1-3 months',
+      value: '3-6months',
+      label: '3-6 Months',
       description: 'Medium-term storage',
       popular: true
     },
     {
-      value: '3-6months',
-      label: '3-6 months',
+      value: '6-12months',
+      label: '6 to 12 Months',
       description: 'Long-term storage'
     },
     {
-      value: '>6months',
-      label: 'More than 6 months',
+      value: '>12months',
+      label: 'More than 12 Months',
       description: 'Extended storage'
     }
   ];

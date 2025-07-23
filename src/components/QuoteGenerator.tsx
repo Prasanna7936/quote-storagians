@@ -28,7 +28,7 @@ const DOCUMENT_TOTAL_STEPS = 8;
 
 const initialFormData: QuoteFormData = {
   storageType: 'household',
-  duration: '1-3months',
+  duration: '3-6months',
   furniture: { extraLarge: 0, large: 0, medium: 0, small: 0 },
   appliances: { extraLarge: 0, large: 0, medium: 0, small: 0 },
   boxes: { luggage: 0, kitchen: 0, clothes: 0, booksPersonal: 0 },

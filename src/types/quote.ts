@@ -1,6 +1,6 @@
 export type StorageType = 'household' | 'business' | 'document' | 'callback';
 
-export type DurationType = '<1month' | '1-3months' | '3-6months' | '>6months';
+export type DurationType = '1-3months' | '3-6months' | '6-12months' | '>12months';
 
 export interface FurnitureItems {
   extraLarge: number; // L Shape Sofa, Almirah/Cupboard 3Door, King Size cot, Dining Table 8 Seater
