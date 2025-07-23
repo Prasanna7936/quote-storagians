@@ -183,13 +183,30 @@ const calculateHouseholdQuote = (formData: QuoteFormData): QuoteResult => {
   const vehicle = VEHICLE_OPTIONS.find(v => totalVolume >= v.minVolume && totalVolume <= v.maxVolume)!;
   
   // 5. Labour Estimation
-  const labourCount = extraLarge >= 1 ? 3 : 2;
+  let labourCount = 2; // Default
+  
+  // Base rules based on volume
+  if (totalVolume <= 900) {
+    labourCount = 2;
+  } else if (totalVolume >= 901 && totalVolume <= 1400) {
+    labourCount = 3;
+  } else if (totalVolume > 1400) {
+    labourCount = 4;
+  }
+  
+  // Override rules
+  if (extraLarge >= 1 && labourCount < 3) {
+    labourCount = 3;
+  }
+  
+  const totalItems = extraLarge + large + medium + small + luggages + boxes;
+  if (totalItems > 60 && labourCount < 4) {
+    labourCount = labourCount + 1;
+  }
   const labourCost = labourCount * LABOUR_COST_PER_PERSON;
   
   // 6. Pickup Charges
   const pickupCharges = packingMaterialCharges + labourCost + vehicle.cost;
-  
-  const totalItems = extraLarge + large + medium + small + luggages + boxes;
   
   return {
     totalItems,
