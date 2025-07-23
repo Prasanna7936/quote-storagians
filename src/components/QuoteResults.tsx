@@ -286,41 +286,43 @@ Please contact me for booking.`;
               </CardContent>
             </Card>
 
-            <Card className="shadow-medium">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Package className="w-5 h-5" />
-                  Items Breakdown
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="font-medium mb-2">Furniture:</div>
-                    <div>Extra Large: {formData.furniture.extraLarge}</div>
-                    <div>Large: {formData.furniture.large}</div>
-                    <div>Medium: {formData.furniture.medium}</div>
-                    <div>Small: {formData.furniture.small}</div>
+            {formData.storageType === 'household' && (
+              <Card className="shadow-medium">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Package className="w-5 h-5" />
+                    Items Breakdown
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="font-medium mb-2">Furniture:</div>
+                      <div>Extra Large: {formData.furniture.extraLarge}</div>
+                      <div>Large: {formData.furniture.large}</div>
+                      <div>Medium: {formData.furniture.medium}</div>
+                      <div>Small: {formData.furniture.small}</div>
+                    </div>
+                    <div>
+                      <div className="font-medium mb-2">Appliances:</div>
+                      <div>Extra Large: {formData.appliances.extraLarge}</div>
+                      <div>Large: {formData.appliances.large}</div>
+                      <div>Medium: {formData.appliances.medium}</div>
+                      <div>Small: {formData.appliances.small}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-medium mb-2">Appliances:</div>
-                    <div>Extra Large: {formData.appliances.extraLarge}</div>
-                    <div>Large: {formData.appliances.large}</div>
-                    <div>Medium: {formData.appliances.medium}</div>
-                    <div>Small: {formData.appliances.small}</div>
+                  <div className="pt-2">
+                    <div className="font-medium mb-2">Boxes & Luggage:</div>
+                    <div className="grid grid-cols-2 gap-1">
+                      <div>Luggage: {formData.boxes.luggage}</div>
+                      <div>Kitchen: {formData.boxes.kitchen}</div>
+                      <div>Clothes: {formData.boxes.clothes}</div>
+                      <div>Books/Personal: {formData.boxes.booksPersonal}</div>
+                    </div>
                   </div>
-                </div>
-                <div className="pt-2">
-                  <div className="font-medium mb-2">Boxes & Luggage:</div>
-                  <div className="grid grid-cols-2 gap-1">
-                    <div>Luggage: {formData.boxes.luggage}</div>
-                    <div>Kitchen: {formData.boxes.kitchen}</div>
-                    <div>Clothes: {formData.boxes.clothes}</div>
-                    <div>Books/Personal: {formData.boxes.booksPersonal}</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 
