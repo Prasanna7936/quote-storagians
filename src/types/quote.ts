@@ -76,4 +76,8 @@ export interface QuoteResult {
   labourCount?: number;
   labourCost?: number;
   pickupCharges?: number;
+  // Business storage calculation fields
+  spaceSize?: string;
+  ratePerSqFt?: number;
+  monthlyRent?: number;
 }

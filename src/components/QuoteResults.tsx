@@ -162,8 +162,45 @@ Please contact me for booking.`;
                     </span>
                   </div>
                 </div>
+              ) : formData.storageType === 'business' ? (
+                // Business storage display format
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Storage Space Selected:</span>
+                    <span className="text-lg font-bold text-primary">
+                      {quote.spaceSize}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Duration:</span>
+                    <span className="text-lg font-bold">
+                      {formData.duration.replace('months', ' Months').replace('>', 'More than ')}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Rate per Sq. Ft:</span>
+                    <span className="text-lg font-bold">
+                      ₹{quote.ratePerSqFt}
+                    </span>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="flex justify-between items-center text-lg">
+                    <span className="font-medium">Monthly Rent:</span>
+                    <span className="text-2xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
+                      ₹{quote.monthlyRent?.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-lg">
+                    <span className="font-medium">Estimated Total:</span>
+                    <span className="text-3xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
+                      ₹{quote.totalCost.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
               ) : (
-                // Original display format for business/document
+                // Original display format for document storage
                 <>
                   <div className="grid grid-cols-2 gap-4 text-center">
                     <div className="bg-muted/50 rounded-lg p-4">
