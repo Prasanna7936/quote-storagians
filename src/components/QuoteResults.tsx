@@ -199,37 +199,54 @@ Please contact me for booking.`;
                   </div>
                 </div>
               ) : (
-                // Original display format for document storage
-                <>
-                  <div className="grid grid-cols-2 gap-4 text-center">
-                    <div className="bg-muted/50 rounded-lg p-4">
-                      <Package className="w-8 h-8 mx-auto mb-2 text-primary" />
-                      <div className="text-2xl font-bold">{quote.totalItems}</div>
-                      <div className="text-sm text-muted-foreground">Total Items</div>
-                    </div>
-                    <div className="bg-muted/50 rounded-lg p-4">
-                      <div className="text-2xl font-bold">{quote.estimatedVolume}</div>
-                      <div className="text-sm text-muted-foreground">Cubic Feet</div>
-                    </div>
+                // Document storage display format
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Storage Type:</span>
+                    <span className="text-lg font-bold text-primary">
+                      {quote.storageType}
+                    </span>
                   </div>
-
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Duration:</span>
+                    <span className="text-lg font-bold">
+                      {quote.durationCategory}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Box Count:</span>
+                    <span className="text-lg font-bold">
+                      {quote.boxCount}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Box Rate:</span>
+                    <span className="text-lg font-bold">
+                      ₹{quote.boxRate}/box/month
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Box Rental:</span>
+                    <span className="text-lg font-bold text-primary">
+                      ₹{quote.boxRental?.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Box Charges:</span>
+                    <span className="text-lg font-bold text-primary">
+                      ₹{quote.boxCharges?.toLocaleString()}
+                    </span>
+                  </div>
+                  
                   <Separator />
-
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-medium">Monthly Rate:</span>
-                      <span className="text-2xl font-bold text-primary">
-                        ₹{quote.monthlyRate.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-lg">
-                      <span className="font-medium">Estimated Total:</span>
-                      <span className="text-3xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
-                        ₹{quote.totalCost.toLocaleString()}
-                      </span>
-                    </div>
+                  
+                  <div className="flex justify-between items-center text-lg">
+                    <span className="font-medium">Total Storage Cost:</span>
+                    <span className="text-2xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
+                      ₹{quote.totalCost.toLocaleString()}
+                    </span>
                   </div>
-                </>
+                </div>
               )}
 
               <div className="bg-info/10 border border-info/20 rounded-lg p-4">

@@ -100,6 +100,24 @@ const BUSINESS_RATE_MATRIX = {
   }
 };
 
+// Document storage rate matrix (₹ per box per month)
+const DOCUMENT_RATE_MATRIX = {
+  'rack': {
+    '<1M': { '10-25': 125, '26-50': 120, '51-100': 110, '101+': 100 },
+    '1-3M': { '10-25': 120, '26-50': 110, '51-100': 100, '101+': 90 },
+    '3-6M': { '10-25': 110, '26-50': 100, '51-100': 90, '101+': 85 },
+    '>12M': { '10-25': 100, '26-50': 90, '51-100': 85, '101+': 80 }
+  },
+  'pallet': {
+    '<1M': { '10-25': 100, '26-50': 90, '51-100': 80, '101+': 70 },
+    '1-3M': { '10-25': 90, '26-50': 80, '51-100': 70, '101+': 60 },
+    '3-6M': { '10-25': 80, '26-50': 70, '51-100': 60, '101+': 55 },
+    '>12M': { '10-25': 70, '26-50': 60, '51-100': 55, '101+': 50 }
+  }
+};
+
+const FRESH_BOX_CHARGE = 100;
+
 export const calculateQuote = (formData: QuoteFormData): QuoteResult => {
   if (formData.storageType === 'household') {
     return calculateHouseholdQuote(formData);
@@ -109,7 +127,11 @@ export const calculateQuote = (formData: QuoteFormData): QuoteResult => {
     return calculateBusinessQuote(formData);
   }
   
-  // Original calculation for document storage
+  if (formData.storageType === 'document') {
+    return calculateDocumentQuote(formData);
+  }
+  
+  // Fallback to old calculation for other types
   const furnitureVolume = 
     formData.furniture.extraLarge * FURNITURE_RATES.extraLarge +
     formData.furniture.large * FURNITURE_RATES.large +
@@ -336,5 +358,85 @@ const calculateBusinessQuote = (formData: QuoteFormData): QuoteResult => {
     spaceSize: spaceSize.charAt(0).toUpperCase() + spaceSize.slice(1),
     ratePerSqFt,
     monthlyRent: Math.round(monthlyRent)
+  };
+};
+
+const calculateDocumentQuote = (formData: QuoteFormData): QuoteResult => {
+  // Map form data to lookup table keys
+  const storageType = formData.documentStorageType === 'rack' ? 'rack' : 'pallet';
+  const boxCountRange = formData.documentBoxCount || '10-25';
+  
+  // Map duration to lookup table format
+  let durationKey: string;
+  switch (formData.duration) {
+    case '1-3months':
+      durationKey = '<1M';
+      break;
+    case '3-6months':
+      durationKey = '1-3M';
+      break;
+    case '6-12months':
+      durationKey = '3-6M';
+      break;
+    case '>12months':
+      durationKey = '>12M';
+      break;
+    default:
+      durationKey = '<1M';
+  }
+  
+  // Get box rate from lookup table
+  const boxRate = DOCUMENT_RATE_MATRIX[storageType][durationKey][boxCountRange];
+  
+  // Calculate box count (use middle value of range for estimation)
+  let boxCount: number;
+  switch (boxCountRange) {
+    case '10-25':
+      boxCount = 17;
+      break;
+    case '26-50':
+      boxCount = 38;
+      break;
+    case '51-100':
+      boxCount = 75;
+      break;
+    case '100+':
+      boxCount = 150;
+      break;
+    default:
+      boxCount = 17;
+  }
+  
+  // Calculate costs
+  const boxRental = boxRate * boxCount;
+  const boxCharges = formData.documentBoxRequirement === 'need-fresh' ? FRESH_BOX_CHARGE * boxCount : 0;
+  const totalStorageCost = boxRental + boxCharges;
+  
+  // Format display values
+  const durationDisplay = formData.duration === '1-3months' ? '<1M' : 
+                         formData.duration === '3-6months' ? '1–3M' :
+                         formData.duration === '6-12months' ? '3–6M' : '>12M';
+  
+  const storageTypeDisplay = storageType === 'rack' ? 'Rack Storage' : 'Pallet Storage';
+  
+  return {
+    totalItems: boxCount,
+    estimatedVolume: boxCount,
+    monthlyRate: boxRental,
+    totalCost: totalStorageCost,
+    breakdown: {
+      furniture: 0,
+      appliances: 0,
+      boxes: 0,
+      baseRate: boxRental,
+      durationMultiplier: 1
+    },
+    // Document storage specific fields
+    storageType: storageTypeDisplay,
+    durationCategory: durationDisplay,
+    boxCount,
+    boxRate,
+    boxRental,
+    boxCharges
   };
 };

@@ -31,7 +31,7 @@ export type BusinessSpaceSize = 'compact' | 'standard' | 'large' | 'custom';
 
 export type DocumentBoxRequirement = 'need-fresh' | 'ready-to-ship';
 export type DocumentStorageType = 'rack' | 'pallet';
-export type DocumentBoxCount = '10-25' | '25-50' | '50-100' | '100+';
+export type DocumentBoxCount = '10-25' | '26-50' | '51-100' | '100+';
 
 export interface QuoteFormData {
   storageType: StorageType;
@@ -80,4 +80,11 @@ export interface QuoteResult {
   spaceSize?: string;
   ratePerSqFt?: number;
   monthlyRent?: number;
+  // Document storage calculation fields
+  storageType?: string;
+  durationCategory?: string;
+  boxCount?: number;
+  boxRate?: number;
+  boxRental?: number;
+  boxCharges?: number;
 }
