@@ -388,23 +388,36 @@ const calculateDocumentQuote = (formData: QuoteFormData): QuoteResult => {
   // Get box rate from lookup table
   const boxRate = DOCUMENT_RATE_MATRIX[storageType][durationKey][boxCountRange];
   
-  // Calculate box count (use middle value of range for estimation)
+  // Calculate actual box count from individual box types
+  const smallBoxes = formData.boxes.booksPersonal; // Documents/Personal Items
+  const mediumBoxes = formData.boxes.kitchen; // Files/Office Documents  
+  const largeBoxes = formData.boxes.clothes; // Large Documents/Files
+  const extraLargeBoxes = formData.boxes.luggage; // Archive Boxes
+  
+  const actualBoxCount = smallBoxes + mediumBoxes + largeBoxes + extraLargeBoxes;
+  
+  // Use actual count if provided, otherwise fall back to range estimation
   let boxCount: number;
-  switch (boxCountRange) {
-    case '10-25':
-      boxCount = 17;
-      break;
-    case '26-50':
-      boxCount = 38;
-      break;
-    case '51-100':
-      boxCount = 75;
-      break;
-    case '100+':
-      boxCount = 150;
-      break;
-    default:
-      boxCount = 17;
+  if (actualBoxCount > 0) {
+    boxCount = actualBoxCount;
+  } else {
+    // Use middle value of selected range as fallback
+    switch (boxCountRange) {
+      case '10-25':
+        boxCount = 17;
+        break;
+      case '26-50':
+        boxCount = 38;
+        break;
+      case '51-100':
+        boxCount = 75;
+        break;
+      case '100+':
+        boxCount = 150;
+        break;
+      default:
+        boxCount = 17;
+    }
   }
   
   // Calculate costs

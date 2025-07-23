@@ -15,13 +15,13 @@ export const DocumentStepFive = ({ formData, updateFormData }: DocumentStepFiveP
       description: 'Small to medium document storage',
     },
     {
-      value: '25-50' as DocumentBoxCount,
-      label: '25 – 50 Boxes',
+      value: '26-50' as DocumentBoxCount,
+      label: '26 – 50 Boxes',
       description: 'Medium document storage',
     },
     {
-      value: '50-100' as DocumentBoxCount,
-      label: '50 – 100 Boxes',
+      value: '51-100' as DocumentBoxCount,
+      label: '51 – 100 Boxes',
       description: 'Large document storage',
     },
     {
