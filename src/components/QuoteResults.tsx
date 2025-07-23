@@ -188,15 +188,14 @@ Please contact me for booking.`;
                   
                   <div className="flex justify-between items-center text-lg">
                     <span className="font-medium">Monthly Rent:</span>
-                    <span className="text-2xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
-                      ₹{quote.monthlyRent?.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="font-medium">Estimated Total:</span>
-                    <span className="text-3xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
-                      ₹{quote.totalCost.toLocaleString()}
-                    </span>
+                    <div className="text-right">
+                      <span className="text-2xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
+                        ₹{quote.monthlyRent?.toLocaleString()}
+                      </span>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        ({quote.spaceSize?.replace('Sq. Ft', '').trim()} Sq. Ft × ₹{quote.ratePerSqFt})
+                      </div>
+                    </div>
                   </div>
                 </div>
               ) : (
