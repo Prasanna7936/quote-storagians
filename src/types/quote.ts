@@ -67,4 +67,13 @@ export interface QuoteResult {
     baseRate: number;
     durationMultiplier: number;
   };
+  // New household calculation fields
+  rentalCharges?: number;
+  packingMaterialCharges?: number;
+  totalVolume?: number;
+  recommendedVehicle?: string;
+  vehicleCost?: number;
+  labourCount?: number;
+  labourCost?: number;
+  pickupCharges?: number;
 }

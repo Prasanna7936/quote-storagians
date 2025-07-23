@@ -1,8 +1,43 @@
 import { QuoteFormData, QuoteResult } from '@/types/quote';
 
-// Pricing constants (per cubic foot per month)
+// New household calculation rates
+const RENTAL_RATES = {
+  extraLarge: 348,
+  large: 222,
+  medium: 136,
+  small: 46,
+  luggage: 50,
+  boxes: 65
+};
+
+const PACKING_MATERIAL_RATES = {
+  extraLarge: 452,
+  large: 288,
+  medium: 177,
+  small: 60,
+  luggage: 50,
+  boxes: 85
+};
+
+const VOLUME_RATES = {
+  extraLarge: 165, // cft per item
+  large: 95,
+  medium: 45,
+  small: 20
+};
+
+const VEHICLE_OPTIONS = [
+  { minVolume: 0, maxVolume: 500, name: 'Tata Ace', cost: 1200 },
+  { minVolume: 501, maxVolume: 900, name: 'Bolero Pickup', cost: 1800 },
+  { minVolume: 901, maxVolume: 1400, name: 'Eicher 14ft', cost: 2800 },
+  { minVolume: 1401, maxVolume: Infinity, name: 'Eicher 17ft', cost: 3600 }
+];
+
+const LABOUR_COST_PER_PERSON = 400;
+
+// Old constants for backward compatibility with business/document storage
 const FURNITURE_RATES = {
-  extraLarge: 8, // cubic feet per item
+  extraLarge: 8,
   large: 5,
   medium: 3,
   small: 1
@@ -22,7 +57,7 @@ const BOX_RATES = {
   booksPersonal: 2
 };
 
-const BASE_RATE_PER_CUBIC_FOOT = 2.5; // ₹2.5 per cubic foot per month
+const BASE_RATE_PER_CUBIC_FOOT = 2.5;
 
 const DURATION_MULTIPLIERS = {
   '<1month': 1.5,
@@ -38,21 +73,23 @@ const STORAGE_TYPE_MULTIPLIERS = {
 };
 
 export const calculateQuote = (formData: QuoteFormData): QuoteResult => {
-  // Calculate furniture volume
+  if (formData.storageType === 'household') {
+    return calculateHouseholdQuote(formData);
+  }
+  
+  // Original calculation for business/document storage
   const furnitureVolume = 
     formData.furniture.extraLarge * FURNITURE_RATES.extraLarge +
     formData.furniture.large * FURNITURE_RATES.large +
     formData.furniture.medium * FURNITURE_RATES.medium +
     formData.furniture.small * FURNITURE_RATES.small;
 
-  // Calculate appliances volume
   const appliancesVolume = 
     formData.appliances.extraLarge * APPLIANCE_RATES.extraLarge +
     formData.appliances.large * APPLIANCE_RATES.large +
     formData.appliances.medium * APPLIANCE_RATES.medium +
     formData.appliances.small * APPLIANCE_RATES.small;
 
-  // Calculate boxes volume
   const boxesVolume = 
     formData.boxes.luggage * BOX_RATES.luggage +
     formData.boxes.kitchen * BOX_RATES.kitchen +
@@ -61,35 +98,29 @@ export const calculateQuote = (formData: QuoteFormData): QuoteResult => {
 
   const totalVolume = furnitureVolume + appliancesVolume + boxesVolume;
   
-  // Calculate total items
   const furnitureItems = Object.values(formData.furniture).reduce((a, b) => a + b, 0);
   const applianceItems = Object.values(formData.appliances).reduce((a, b) => a + b, 0);
   const boxItems = Object.values(formData.boxes).reduce((a, b) => a + b, 0);
   const totalItems = furnitureItems + applianceItems + boxItems;
 
-  // Calculate base rate
   const baseRate = totalVolume * BASE_RATE_PER_CUBIC_FOOT;
-  
-  // Apply multipliers
   const durationMultiplier = DURATION_MULTIPLIERS[formData.duration];
   const storageTypeMultiplier = STORAGE_TYPE_MULTIPLIERS[formData.storageType];
-  
   const monthlyRate = baseRate * durationMultiplier * storageTypeMultiplier;
   
-  // Calculate total cost based on duration
   let totalCost = monthlyRate;
   switch (formData.duration) {
     case '<1month':
       totalCost = monthlyRate;
       break;
     case '1-3months':
-      totalCost = monthlyRate * 2.5; // average 2.5 months
+      totalCost = monthlyRate * 2.5;
       break;
     case '3-6months':
-      totalCost = monthlyRate * 4.5; // average 4.5 months
+      totalCost = monthlyRate * 4.5;
       break;
     case '>6months':
-      totalCost = monthlyRate * 8; // average 8 months
+      totalCost = monthlyRate * 8;
       break;
   }
 
@@ -105,5 +136,81 @@ export const calculateQuote = (formData: QuoteFormData): QuoteResult => {
       baseRate: Math.round(baseRate),
       durationMultiplier
     }
+  };
+};
+
+const calculateHouseholdQuote = (formData: QuoteFormData): QuoteResult => {
+  const rentalAdjustmentFactor = 1.0;
+  const packingMaterialAdjustmentFactor = 1.0;
+  
+  // Get total items by category
+  const extraLarge = formData.furniture.extraLarge + formData.appliances.extraLarge;
+  const large = formData.furniture.large + formData.appliances.large;
+  const medium = formData.furniture.medium + formData.appliances.medium;
+  const small = formData.furniture.small + formData.appliances.small;
+  const luggages = formData.boxes.luggage;
+  const boxes = formData.boxes.kitchen + formData.boxes.clothes + formData.boxes.booksPersonal;
+  
+  // 1. Rental Calculation
+  const rentalCharges = Math.round(
+    ((extraLarge * RENTAL_RATES.extraLarge) +
+     (large * RENTAL_RATES.large) +
+     (medium * RENTAL_RATES.medium) +
+     (small * RENTAL_RATES.small) +
+     (luggages * RENTAL_RATES.luggage) +
+     (boxes * RENTAL_RATES.boxes)) * rentalAdjustmentFactor
+  );
+  
+  // 2. Packing Material Calculation
+  const packingMaterialCharges = Math.round(
+    ((extraLarge * PACKING_MATERIAL_RATES.extraLarge) +
+     (large * PACKING_MATERIAL_RATES.large) +
+     (medium * PACKING_MATERIAL_RATES.medium) +
+     (small * PACKING_MATERIAL_RATES.small) +
+     (luggages * PACKING_MATERIAL_RATES.luggage) +
+     (boxes * PACKING_MATERIAL_RATES.boxes)) * packingMaterialAdjustmentFactor
+  );
+  
+  // 3. Volume Calculation (only for furniture/appliances)
+  const totalVolume = Math.round(
+    (extraLarge * VOLUME_RATES.extraLarge) +
+    (large * VOLUME_RATES.large) +
+    (medium * VOLUME_RATES.medium) +
+    (small * VOLUME_RATES.small)
+  );
+  
+  // 4. Vehicle Selection
+  const vehicle = VEHICLE_OPTIONS.find(v => totalVolume >= v.minVolume && totalVolume <= v.maxVolume)!;
+  
+  // 5. Labour Estimation
+  const labourCount = extraLarge >= 1 ? 3 : 2;
+  const labourCost = labourCount * LABOUR_COST_PER_PERSON;
+  
+  // 6. Pickup Charges
+  const pickupCharges = packingMaterialCharges + labourCost + vehicle.cost;
+  
+  const totalItems = extraLarge + large + medium + small + luggages + boxes;
+  
+  return {
+    totalItems,
+    estimatedVolume: totalVolume,
+    monthlyRate: rentalCharges,
+    totalCost: rentalCharges,
+    breakdown: {
+      furniture: 0,
+      appliances: 0,
+      boxes: 0,
+      baseRate: rentalCharges,
+      durationMultiplier: 1
+    },
+    // New household fields
+    rentalCharges,
+    packingMaterialCharges,
+    totalVolume,
+    recommendedVehicle: vehicle.name,
+    vehicleCost: vehicle.cost,
+    labourCount,
+    labourCost,
+    pickupCharges
   };
 };
