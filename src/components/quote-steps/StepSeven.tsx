@@ -26,7 +26,25 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
         <Truck className="w-12 h-12 mx-auto mb-4 text-primary" />
         {isThirdPartyDrop && (
           <p className="text-muted-foreground mb-4">
-            Use popular providers like Porter or NoBroker, or arrange any logistics service of your choice to drop items at our warehouse.
+            Use popular providers like{' '}
+            <a 
+              href="https://porter.in/packers-and-movers/bangalore?gads=search&utm_source=google&utm_medium=cpc&utm_campaign=19009706290&utm_term=141080200702&utm_content=porter%20packers%20and%20movers&click_id=Cj0KCQjwkILEBhDeARIsAL--pjxZIev_J99mEIO-_Xc4DvRC87rUBsVACIdPEouv1FYYYBu94Tt6CyoaAsIgEALw_wcB&gad_source=1&gad_campaignid=19009706290&gbraid=0AAAAAoulZ9igs693PNtb9NMTNxHV4vUot&gclid=Cj0KCQjwkILEBhDeARIsAL--pjxZIev_J99mEIO-_Xc4DvRC87rUBsVACIdPEouv1FYYYBu94Tt6CyoaAsIgEALw_wcB"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline font-medium"
+            >
+              Porter
+            </a>{' '}
+            or{' '}
+            <a 
+              href="https://www.nobroker.in/packers-and-movers/bangalore"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline font-medium"
+            >
+              NoBroker
+            </a>
+            , or arrange any logistics service of your choice to drop items at our warehouse.
           </p>
         )}
         <p className="text-muted-foreground">
