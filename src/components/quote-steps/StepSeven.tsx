@@ -17,20 +17,27 @@ interface StepSevenProps {
 
 export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
   const isSelfDrop = formData.deliveryMethod === 'self-drop';
+  const isThirdPartyDrop = formData.deliveryMethod === 'third-party';
+  const isDropMethod = isSelfDrop || isThirdPartyDrop;
 
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
         <Truck className="w-12 h-12 mx-auto mb-4 text-primary" />
+        {isThirdPartyDrop && (
+          <p className="text-muted-foreground mb-4">
+            Use popular providers like Porter or NoBroker, or arrange any logistics service of your choice to drop items at our warehouse.
+          </p>
+        )}
         <p className="text-muted-foreground">
-          {isSelfDrop 
+          {isDropMethod 
             ? "When and where will you drop off your items?"
             : "When and where should we pick up your items?"
           }
         </p>
       </div>
 
-      {isSelfDrop && (
+      {isDropMethod && (
         <Alert className="border-primary/20 bg-primary/5">
           <Package2 className="h-4 w-4" />
           <AlertDescription>
@@ -44,9 +51,9 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
         <div className="space-y-2">
           <Label htmlFor="location" className="flex items-center gap-2">
             <MapPin className="w-4 h-4" />
-            {isSelfDrop ? 'Drop Location' : 'Pickup Location'}
+            {isDropMethod ? 'Drop Location' : 'Pickup Location'}
           </Label>
-          {isSelfDrop ? (
+          {isDropMethod ? (
             <div className="space-y-3">
               <div>
                 <Label className="text-sm font-medium text-muted-foreground">Drop Address</Label>
@@ -84,7 +91,7 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
         <div className="space-y-2">
           <Label className="flex items-center gap-2">
             <CalendarIcon className="w-4 h-4" />
-            {isSelfDrop ? 'Drop Date' : 'Pickup Date'}
+            {isDropMethod ? 'Drop Date' : 'Pickup Date'}
           </Label>
           <Popover>
             <PopoverTrigger asChild>
@@ -124,8 +131,8 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
           <div className="flex items-start gap-3">
             <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
             <div className="text-sm text-muted-foreground">
-              <p className="font-medium mb-1">{isSelfDrop ? 'Drop Information:' : 'Pickup Information:'}</p>
-              {isSelfDrop ? (
+              <p className="font-medium mb-1">{isDropMethod ? 'Drop Information:' : 'Pickup Information:'}</p>
+              {isDropMethod ? (
                 <ul className="space-y-1 text-xs">
                   <li>• Drop-off is available during business hours (9 AM - 6 PM)</li>
                   <li>• Please bring a valid ID for verification</li>

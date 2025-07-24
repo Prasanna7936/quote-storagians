@@ -108,7 +108,7 @@ export const QuoteGenerator = () => {
   };
 
   const getStepTitle = (step: number) => {
-    const isSelfDrop = formData.deliveryMethod === 'self-drop';
+    const isDropMethod = formData.deliveryMethod === 'self-drop' || formData.deliveryMethod === 'third-party';
     
     if (isBusinessFlow) {
       switch (step) {
@@ -118,7 +118,7 @@ export const QuoteGenerator = () => {
         case 4: return 'Goods Category';
         case 5: return 'Space Size';
         case 6: return 'Delivery Method';
-        case 7: return isSelfDrop ? 'Drop Details' : 'Pickup Details';
+        case 7: return isDropMethod ? 'Drop Details' : 'Pickup Details';
         case 8: return 'Your Information';
         default: return 'Step';
       }
@@ -130,7 +130,7 @@ export const QuoteGenerator = () => {
         case 4: return 'Storage Type';
         case 5: return 'Number of Boxes';
         case 6: return 'Delivery Method';
-        case 7: return isSelfDrop ? 'Drop Details' : 'Pickup Details';
+        case 7: return isDropMethod ? 'Drop Details' : 'Pickup Details';
         case 8: return 'Your Information';
         default: return 'Step';
       }
@@ -142,7 +142,7 @@ export const QuoteGenerator = () => {
         case 4: return 'Appliances';
         case 5: return 'Boxes & Luggage';
         case 6: return 'Delivery Method';
-        case 7: return isSelfDrop ? 'Drop Details' : 'Pickup Details';
+        case 7: return isDropMethod ? 'Drop Details' : 'Pickup Details';
         case 8: return 'Your Information';
         default: return 'Step';
       }
