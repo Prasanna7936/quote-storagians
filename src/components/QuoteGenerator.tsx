@@ -23,7 +23,7 @@ import { QuoteResults } from './QuoteResults';
 import { calculateQuote } from '@/utils/quoteCalculator';
 
 const TOTAL_STEPS = 8;
-const BUSINESS_TOTAL_STEPS = 7;
+const BUSINESS_TOTAL_STEPS = 8;
 const DOCUMENT_TOTAL_STEPS = 8;
 
 const initialFormData: QuoteFormData = {
@@ -116,7 +116,8 @@ export const QuoteGenerator = () => {
         case 4: return 'Goods Category';
         case 5: return 'Space Size';
         case 6: return 'Delivery Method';
-        case 7: return 'Your Information';
+        case 7: return 'Pickup Details';
+        case 8: return 'Your Information';
         default: return 'Step';
       }
     } else if (isDocumentFlow) {
@@ -262,6 +263,12 @@ export const QuoteGenerator = () => {
               />
             )}
             {currentStep === 7 && isBusinessFlow && (
+              <StepSeven 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 8 && isBusinessFlow && (
               <StepEight 
                 formData={formData} 
                 updateFormData={updateFormData} 
