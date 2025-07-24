@@ -103,15 +103,15 @@ const BUSINESS_RATE_MATRIX = {
 // Document storage rate matrix (₹ per box per month)
 const DOCUMENT_RATE_MATRIX = {
   'rack': {
-    '<1M': { '10-25': 125, '26-50': 120, '51-100': 110, '101+': 100 },
-    '1-3M': { '10-25': 120, '26-50': 110, '51-100': 100, '101+': 90 },
-    '3-6M': { '10-25': 110, '26-50': 100, '51-100': 90, '101+': 85 },
+    '1-3M': { '10-25': 125, '26-50': 120, '51-100': 110, '101+': 100 },
+    '3-6M': { '10-25': 120, '26-50': 110, '51-100': 100, '101+': 90 },
+    '6-12M': { '10-25': 110, '26-50': 100, '51-100': 90, '101+': 85 },
     '>12M': { '10-25': 100, '26-50': 90, '51-100': 85, '101+': 80 }
   },
   'pallet': {
-    '<1M': { '10-25': 100, '26-50': 90, '51-100': 80, '101+': 70 },
-    '1-3M': { '10-25': 90, '26-50': 80, '51-100': 70, '101+': 60 },
-    '3-6M': { '10-25': 80, '26-50': 70, '51-100': 60, '101+': 55 },
+    '1-3M': { '10-25': 100, '26-50': 90, '51-100': 80, '101+': 70 },
+    '3-6M': { '10-25': 90, '26-50': 80, '51-100': 70, '101+': 60 },
+    '6-12M': { '10-25': 80, '26-50': 70, '51-100': 60, '101+': 55 },
     '>12M': { '10-25': 70, '26-50': 60, '51-100': 55, '101+': 50 }
   }
 };
@@ -119,6 +119,16 @@ const DOCUMENT_RATE_MATRIX = {
 const FRESH_BOX_CHARGE = 100;
 
 export const calculateQuote = (formData: QuoteFormData): QuoteResult => {
+  // Log calculation inputs for debugging
+  console.log('Calculating quote for:', {
+    storageType: formData.storageType,
+    duration: formData.duration,
+    businessSpaceSize: formData.businessSpaceSize,
+    documentStorageType: formData.documentStorageType,
+    documentBoxCount: formData.documentBoxCount,
+    documentBoxRequirement: formData.documentBoxRequirement
+  });
+
   if (formData.storageType === 'household') {
     return calculateHouseholdQuote(formData);
   }
@@ -234,7 +244,7 @@ const calculateHouseholdQuote = (formData: QuoteFormData): QuoteResult => {
   );
   
   // 4. Vehicle Selection
-  const vehicle = VEHICLE_OPTIONS.find(v => totalVolume >= v.minVolume && totalVolume <= v.maxVolume)!;
+  const vehicle = VEHICLE_OPTIONS.find(v => totalVolume >= v.minVolume && totalVolume <= v.maxVolume) || VEHICLE_OPTIONS[0];
   
   // 5. Labour Estimation
   let labourCount = 2; // Default
@@ -355,7 +365,7 @@ const calculateBusinessQuote = (formData: QuoteFormData): QuoteResult => {
       durationMultiplier: 1
     },
     // Business storage specific fields
-    spaceSize: spaceSize.charAt(0).toUpperCase() + spaceSize.slice(1),
+    spaceSize: `${estimatedSqFt} Sq. Ft (${spaceSize.charAt(0).toUpperCase() + spaceSize.slice(1)})`,
     ratePerSqFt,
     monthlyRent: Math.round(monthlyRent)
   };
@@ -370,24 +380,33 @@ const calculateDocumentQuote = (formData: QuoteFormData): QuoteResult => {
   let durationKey: string;
   switch (formData.duration) {
     case '1-3months':
-      durationKey = '<1M';
-      break;
-    case '3-6months':
       durationKey = '1-3M';
       break;
-    case '6-12months':
+    case '3-6months':
       durationKey = '3-6M';
+      break;
+    case '6-12months':
+      durationKey = '6-12M';
       break;
     case '>12months':
       durationKey = '>12M';
       break;
     default:
-      durationKey = '<1M';
+      durationKey = '1-3M';
   }
   
   // Get box rate from lookup table (handle 100+ -> 101+ mapping)
   const rateKey = boxCountRange === '100+' ? '101+' : boxCountRange;
-  const boxRate = DOCUMENT_RATE_MATRIX[storageType][durationKey][rateKey];
+  const boxRate = DOCUMENT_RATE_MATRIX[storageType]?.[durationKey]?.[rateKey] || 100;
+  
+  // Log document calculation details for debugging
+  console.log('Document storage calculation:', {
+    storageType,
+    durationKey,
+    rateKey,
+    boxRate,
+    boxCountRange
+  });
   
   // Use fixed box counts based on selected range
   let boxCount: number;
@@ -414,9 +433,9 @@ const calculateDocumentQuote = (formData: QuoteFormData): QuoteResult => {
   const totalStorageCost = boxRental + boxCharges;
   
   // Format display values
-  const durationDisplay = formData.duration === '1-3months' ? '<1M' : 
-                         formData.duration === '3-6months' ? '1–3M' :
-                         formData.duration === '6-12months' ? '3–6M' : '>12M';
+  const durationDisplay = formData.duration === '1-3months' ? '1–3M' : 
+                         formData.duration === '3-6months' ? '3–6M' :
+                         formData.duration === '6-12months' ? '6–12M' : '>12M';
   
   const storageTypeDisplay = storageType === 'rack' ? 'Rack Storage' : 'Pallet Storage';
   
