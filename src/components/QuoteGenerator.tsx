@@ -17,6 +17,8 @@ import { DocumentStepThree } from './quote-steps/DocumentStepThree';
 import { DocumentStepFour } from './quote-steps/DocumentStepFour';
 import { DocumentStepFive } from './quote-steps/DocumentStepFive';
 import { QuoteResults } from './QuoteResults';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { calculateQuote } from '@/utils/quoteCalculator';
 
 const TOTAL_STEPS = 8;
@@ -43,6 +45,7 @@ export const QuoteGenerator = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<QuoteFormData>(initialFormData);
   const [quote, setQuote] = useState<QuoteResult | null>(null);
+  const { toast } = useToast();
 
   const updateFormData = (updates: Partial<QuoteFormData>) => {
     setFormData(prev => ({ ...prev, ...updates }));
@@ -69,9 +72,52 @@ export const QuoteGenerator = () => {
     }
   };
 
-  const generateQuote = () => {
-    const calculatedQuote = calculateQuote(formData);
-    setQuote(calculatedQuote);
+  const generateQuote = async () => {
+    try {
+      // Show loading toast
+      toast({
+        title: "Generating quote...",
+        description: "Please wait while we calculate your storage quote.",
+      });
+
+      const calculatedQuote = calculateQuote(formData);
+      setQuote(calculatedQuote);
+
+      // Send quote emails to both company and customer
+      const { error } = await supabase.functions.invoke('send-quote-email', {
+        body: {
+          formData,
+          quote: calculatedQuote,
+          type: 'new_quote'
+        }
+      });
+
+      if (error) {
+        console.error('Error sending quote email:', error);
+        toast({
+          title: "Quote generated!",
+          description: "Your quote is ready. Note: Email notification failed to send.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Quote generated!",
+          description: "Your quote is ready and email notifications have been sent.",
+          variant: "default",
+        });
+      }
+
+    } catch (error) {
+      console.error('Error generating quote:', error);
+      const calculatedQuote = calculateQuote(formData);
+      setQuote(calculatedQuote);
+      
+      toast({
+        title: "Quote generated!",
+        description: "Your quote is ready. Note: Email notification failed to send.",
+        variant: "default",
+      });
+    }
   };
 
   const resetForm = () => {

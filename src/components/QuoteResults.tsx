@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface QuoteResultsProps {
   quote: QuoteResult;
@@ -23,6 +25,7 @@ interface QuoteResultsProps {
 }
 
 export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) => {
+  const { toast } = useToast();
   const downloadQuote = () => {
     const pdf = new jsPDF();
     
@@ -343,11 +346,8 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
     let message;
     if (formData.storageType === 'household' && quote.pickupCharges) {
       message = `Hi! I got a household storage quote:
-Rental Charges: ₹${quote.rentalCharges?.toLocaleString()}
-Packing Material: ₹${quote.packingMaterialCharges?.toLocaleString()}
 Total Volume: ${quote.totalVolume} cft
-Vehicle: ${quote.recommendedVehicle} (₹${quote.vehicleCost?.toLocaleString()})
-Labour: ${quote.labourCount} persons (₹${quote.labourCost?.toLocaleString()})
+Rental: ₹${quote.rentalCharges?.toLocaleString()} + GST
 Pickup Charges: ₹${quote.pickupCharges.toLocaleString()}
 Please contact me for booking.`;
     } else {
@@ -355,6 +355,47 @@ Please contact me for booking.`;
     }
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
+  };
+
+  const confirmBooking = async () => {
+    try {
+      // Show loading toast
+      toast({
+        title: "Sending confirmation...",
+        description: "Please wait while we process your booking request.",
+      });
+
+      // Send email notification
+      const { error } = await supabase.functions.invoke('send-quote-email', {
+        body: {
+          formData,
+          quote,
+          type: 'booking_confirmation'
+        }
+      });
+
+      if (error) throw error;
+
+      // Show success message
+      toast({
+        title: "Booking Confirmed!",
+        description: "Our team will connect you shortly.",
+        variant: "default",
+      });
+
+      // Redirect to main page after 2 seconds
+      setTimeout(() => {
+        onReset();
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error sending booking confirmation:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send confirmation. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -381,46 +422,37 @@ Please contact me for booking.`;
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               {formData.storageType === 'household' ? (
-                // New household display format
+                // Updated household display format per requirements
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Rental Charges:</span>
-                    <span className="text-lg font-bold text-primary">
-                      ₹{quote.rentalCharges?.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Packing Material Charges:</span>
-                    <span className="text-lg font-bold text-primary">
-                      ₹{quote.packingMaterialCharges?.toLocaleString()}
-                    </span>
-                  </div>
+                  {/* Total Volume first */}
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Total Volume:</span>
                     <span className="text-lg font-bold">
                       {quote.totalVolume} cft
                     </span>
                   </div>
+                  
+                  {/* Rental with GST */}
                   <div className="flex justify-between items-center">
-                    <span className="font-medium">Recommended Vehicle:</span>
-                    <span className="text-lg font-bold">
-                      {quote.recommendedVehicle} (₹{quote.vehicleCost?.toLocaleString()})
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Labour Required:</span>
-                    <span className="text-lg font-bold">
-                      {quote.labourCount} (₹{quote.labourCost?.toLocaleString()})
+                    <span className="font-medium">Rental:</span>
+                    <span className="text-lg font-bold text-primary">
+                      ₹{quote.rentalCharges?.toLocaleString()} + GST
                     </span>
                   </div>
                   
                   <Separator />
                   
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="font-medium">Pickup Charges:</span>
-                    <span className="text-2xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
-                      ₹{quote.pickupCharges?.toLocaleString()}
-                    </span>
+                  {/* Only Pickup Charges with note */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-lg">
+                      <span className="font-medium">Pickup Charges:</span>
+                      <span className="text-2xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
+                        ₹{quote.pickupCharges?.toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      (Includes Packing Material, Transportation and Labour Charges)
+                    </p>
                   </div>
                 </div>
               ) : (
@@ -578,9 +610,9 @@ Please contact me for booking.`;
               <MessageCircle className="w-4 h-4 mr-2" />
               Share on WhatsApp
             </Button>
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" onClick={confirmBooking}>
               <Mail className="w-4 h-4 mr-2" />
-              Email Quote
+              Confirm Booking
             </Button>
             <Button variant="outline" onClick={onReset} size="lg">
               <RefreshCw className="w-4 h-4 mr-2" />
@@ -671,6 +703,15 @@ Please contact me for booking.`;
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Call us section */}
+        <div className="max-w-4xl mx-auto mt-8">
+          <div className="bg-primary/10 border-2 border-primary/30 rounded-lg p-4">
+            <p className="text-center text-lg font-semibold text-primary">
+              Call us: +91 9900056394
+            </p>
+          </div>
         </div>
 
         <div className="max-w-4xl mx-auto mt-8 text-center">
