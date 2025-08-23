@@ -32,11 +32,6 @@ export const StepOne = ({ formData, updateFormData }: StepOneProps) => {
 
   return (
     <div className="space-y-8">
-      <div className="text-center">
-        <p className="text-muted-foreground">
-          Select the type of storage you need or request a callback
-        </p>
-      </div>
 
       {/* Storage Types Section */}
       <div className="space-y-4">

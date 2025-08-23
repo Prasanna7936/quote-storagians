@@ -155,46 +155,43 @@ export const QuoteGenerator = () => {
           )}
         </div>
 
-        {/* Progress Bar */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-medium text-muted-foreground">
-              Step {currentStep} of {maxSteps}
-            </span>
-            <span className="text-sm font-medium text-primary">
-              {Math.round((currentStep / maxSteps) * 100)}% Complete
-            </span>
-          </div>
-          <Progress value={(currentStep / maxSteps) * 100} className="h-2" />
-          
-          {/* Step indicators */}
-          <div className="flex justify-between mt-4">
-            {Array.from({ length: maxSteps }, (_, i) => {
-              const step = i + 1;
-              const Icon = getStepIcon(step);
-              const isActive = step === currentStep;
-              const isCompleted = step < currentStep;
-              
-              return (
-                <div key={step} className="flex flex-col items-center">
-                  <div className={`
-                    w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200
-                    ${isActive ? 'bg-primary text-primary-foreground shadow-medium' : 
-                      isCompleted ? 'bg-success text-accent-foreground' : 
-                      'bg-muted text-muted-foreground'}
-                  `}>
-                    <Icon className="w-4 h-4" />
+        {/* Progress Bar - Hide for callback flow */}
+        {formData.storageType !== 'callback' && (
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-muted-foreground">
+                Step {currentStep} of {maxSteps}
+              </span>
+              <span className="text-sm font-medium text-primary">
+                {Math.round((currentStep / maxSteps) * 100)}% Complete
+              </span>
+            </div>
+            <Progress value={(currentStep / maxSteps) * 100} className="h-2" />
+            
+            {/* Step indicators - Icons only */}
+            <div className="flex justify-between mt-4">
+              {Array.from({ length: maxSteps }, (_, i) => {
+                const step = i + 1;
+                const Icon = getStepIcon(step);
+                const isActive = step === currentStep;
+                const isCompleted = step < currentStep;
+                
+                return (
+                  <div key={step} className="flex flex-col items-center">
+                    <div className={`
+                      w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200
+                      ${isActive ? 'bg-primary text-primary-foreground shadow-medium' : 
+                        isCompleted ? 'bg-success text-accent-foreground' : 
+                        'bg-muted text-muted-foreground'}
+                    `}>
+                      <Icon className="w-4 h-4" />
+                    </div>
                   </div>
-                  <span className={`text-xs mt-2 text-center max-w-16 ${
-                    isActive ? 'text-primary font-medium' : 'text-muted-foreground'
-                  }`}>
-                    {getStepTitle(step)}
-                  </span>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Form Content */}
         <Card className="max-w-4xl mx-auto shadow-medium animate-slide-up">
