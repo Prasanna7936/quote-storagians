@@ -77,27 +77,26 @@ URGENT: Please contact this customer as soon as possible.
     console.log("📧 Sending callback request email...");
     
     const emailResponse = await resend.emails.send({
-      from: "Storagians <onboarding@resend.dev>", // Using Resend's verified domain
-      to: ["prasanna.7936@gmail.com"], // Send to your verified email
+      from: "Storagians Callback <onboarding@resend.dev>", // Using Resend's verified domain
+      to: ["prasanna.7936@gmail.com"], // Temporary: send to verified email until domain is verified
       subject: emailSubject,
       html: emailHtml,
       text: emailText,
     });
 
-    console.log("📧 Resend API response:", JSON.stringify(emailResponse, null, 2));
+    console.log("📧 Full Resend API response:", JSON.stringify(emailResponse, null, 2));
     
-    // Check if there's an error in the response
-    if (emailResponse.error) {
-      console.error("❌ Resend API error:", emailResponse.error);
-      throw new Error(`Email sending failed: ${emailResponse.error.message || emailResponse.error}`);
-    }
-    
-    if (!emailResponse.data) {
-      console.error("❌ No data in email response:", emailResponse);
-      throw new Error("Email sending failed: No response data");
+    // Proper error handling - Resend can return errors in different ways
+    if (emailResponse.error || !emailResponse.data) {
+      const errorMsg = emailResponse.error?.message || emailResponse.error || "No response data from Resend";
+      console.error("❌ Resend API error:", errorMsg);
+      console.error("❌ Full error object:", JSON.stringify(emailResponse.error, null, 2));
+      throw new Error(`Email sending failed: ${errorMsg}`);
     }
     
     console.log("✅ Email sent successfully with ID:", emailResponse.data.id);
+    console.log("📧 NOTE: Email sent to prasanna.7936@gmail.com (verified email)");
+    console.log("📧 TO RECEIVE AT info@storagians.com: Verify domain at https://resend.com/domains");
 
     return new Response(
       JSON.stringify({ 
