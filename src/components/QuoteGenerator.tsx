@@ -254,6 +254,44 @@ export const QuoteGenerator = () => {
               />
             )}
 
+            {/* Document Flow Steps */}
+            {currentStep === 3 && isDocumentFlow && (
+              <DocumentStepThree 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 4 && isDocumentFlow && (
+              <DocumentStepFour 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 5 && isDocumentFlow && (
+              <DocumentStepFive 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 6 && isDocumentFlow && (
+              <StepSix 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 7 && isDocumentFlow && (
+              <StepSeven 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+            {currentStep === 8 && isDocumentFlow && (
+              <StepEight 
+                formData={formData} 
+                updateFormData={updateFormData} 
+              />
+            )}
+
             {/* Navigation Buttons - Hide for callback form */}
             {!(formData.storageType === 'callback' && currentStep === 2) && (
               <div className="flex justify-between mt-8 pt-6 border-t">
