@@ -14,6 +14,7 @@ import {
   User
 } from 'lucide-react';
 import { format } from 'date-fns';
+import jsPDF from 'jspdf';
 
 interface QuoteResultsProps {
   quote: QuoteResult;
@@ -23,59 +24,163 @@ interface QuoteResultsProps {
 
 export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) => {
   const downloadQuote = () => {
-    const quoteSummary = `
-STORAGE QUOTE SUMMARY
-====================
-
-Customer Information:
-Name: ${formData.customerName}
-Phone: ${formData.customerPhone}
-Email: ${formData.customerEmail}
-
-Storage Details:
-Type: ${formData.storageType.charAt(0).toUpperCase() + formData.storageType.slice(1)} Storage
-Duration: ${formData.duration}
-Pickup Location: ${formData.pickupLocation}
-Pickup Date: ${formData.pickupDate ? format(formData.pickupDate, 'PPP') : 'Not specified'}
-
-Items Summary:
-Total Items: ${quote.totalItems}
-Estimated Volume: ${quote.estimatedVolume} cubic feet
-
-Furniture:
-- Extra Large: ${formData.furniture.extraLarge}
-- Large: ${formData.furniture.large}
-- Medium: ${formData.furniture.medium}
-- Small: ${formData.furniture.small}
-
-Appliances:
-- Extra Large: ${formData.appliances.extraLarge}
-- Large: ${formData.appliances.large}
-- Medium: ${formData.appliances.medium}
-- Small: ${formData.appliances.small}
-
-Boxes & Luggage:
-- Luggage: ${formData.boxes.luggage}
-- Kitchen Items: ${formData.boxes.kitchen}
-- Clothes & Bedding: ${formData.boxes.clothes}
-- Books/Document and Personal Items: ${formData.boxes.booksPersonal}
-
-PRICING:
-Monthly Rate: ₹${quote.monthlyRate.toLocaleString()}
-Total Estimated Cost: ₹${quote.totalCost.toLocaleString()}
-
-Generated on: ${format(new Date(), 'PPP')}
-    `.trim();
-
-    const blob = new Blob([quoteSummary], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `storage-quote-${formData.customerName.replace(/\s+/g, '-')}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const pdf = new jsPDF();
+    
+    // Add logo (we'll add a placeholder for now)
+    pdf.setFontSize(20);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('STORAGIANS', 105, 25, { align: 'center' });
+    
+    // Header
+    pdf.setFontSize(16);
+    pdf.text('STORAGE QUOTE SUMMARY', 105, 40, { align: 'center' });
+    
+    // Line under header
+    pdf.line(20, 45, 190, 45);
+    
+    let yPos = 60;
+    
+    // Customer Information
+    pdf.setFontSize(14);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Customer Information:', 20, yPos);
+    yPos += 10;
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.setFontSize(11);
+    pdf.text(`Name: ${formData.customerName}`, 25, yPos);
+    yPos += 7;
+    pdf.text(`Phone: ${formData.customerPhone}`, 25, yPos);
+    yPos += 7;
+    pdf.text(`Email: ${formData.customerEmail}`, 25, yPos);
+    yPos += 15;
+    
+    // Storage Details
+    pdf.setFontSize(14);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Storage Details:', 20, yPos);
+    yPos += 10;
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.setFontSize(11);
+    pdf.text(`Type: ${formData.storageType.charAt(0).toUpperCase() + formData.storageType.slice(1)} Storage`, 25, yPos);
+    yPos += 7;
+    pdf.text(`Duration: ${formData.duration}`, 25, yPos);
+    yPos += 7;
+    pdf.text(`Location: ${formData.pickupLocation}`, 25, yPos);
+    yPos += 7;
+    pdf.text(`Pickup Date: ${formData.pickupDate ? format(formData.pickupDate, 'PPP') : 'Not specified'}`, 25, yPos);
+    yPos += 15;
+    
+    // Quote Summary based on storage type
+    pdf.setFontSize(14);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Quote Summary:', 20, yPos);
+    yPos += 10;
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.setFontSize(11);
+    
+    if (formData.storageType === 'household') {
+      if (quote.rentalCharges) {
+        pdf.text(`Rental Charges: ₹${quote.rentalCharges.toLocaleString()}`, 25, yPos);
+        yPos += 7;
+        pdf.text(`Packing Material Charges: ₹${quote.packingMaterialCharges?.toLocaleString()}`, 25, yPos);
+        yPos += 7;
+        pdf.text(`Total Volume: ${quote.totalVolume} cft`, 25, yPos);
+        yPos += 7;
+        pdf.text(`Recommended Vehicle: ${quote.recommendedVehicle} (₹${quote.vehicleCost?.toLocaleString()})`, 25, yPos);
+        yPos += 7;
+        pdf.text(`Labour Required: ${quote.labourCount} persons (₹${quote.labourCost?.toLocaleString()})`, 25, yPos);
+        yPos += 7;
+        pdf.setFont(undefined, 'bold');
+        pdf.text(`Pickup Charges: ₹${quote.pickupCharges?.toLocaleString()}`, 25, yPos);
+        yPos += 15;
+      }
+      
+      // Items breakdown for household
+      pdf.setFontSize(14);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Items Breakdown:', 20, yPos);
+      yPos += 10;
+      
+      pdf.setFont(undefined, 'normal');
+      pdf.setFontSize(11);
+      
+      // Furniture
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Furniture:', 25, yPos);
+      yPos += 7;
+      pdf.setFont(undefined, 'normal');
+      pdf.text(`Extra Large: ${formData.furniture.extraLarge}`, 30, yPos);
+      yPos += 5;
+      pdf.text(`Large: ${formData.furniture.large}`, 30, yPos);
+      yPos += 5;
+      pdf.text(`Medium: ${formData.furniture.medium}`, 30, yPos);
+      yPos += 5;
+      pdf.text(`Small: ${formData.furniture.small}`, 30, yPos);
+      yPos += 10;
+      
+      // Appliances
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Appliances:', 25, yPos);
+      yPos += 7;
+      pdf.setFont(undefined, 'normal');
+      pdf.text(`Extra Large: ${formData.appliances.extraLarge}`, 30, yPos);
+      yPos += 5;
+      pdf.text(`Large: ${formData.appliances.large}`, 30, yPos);
+      yPos += 5;
+      pdf.text(`Medium: ${formData.appliances.medium}`, 30, yPos);
+      yPos += 5;
+      pdf.text(`Small: ${formData.appliances.small}`, 30, yPos);
+      yPos += 10;
+      
+      // Boxes & Luggage
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Boxes & Luggage:', 25, yPos);
+      yPos += 7;
+      pdf.setFont(undefined, 'normal');
+      pdf.text(`Luggage: ${formData.boxes.luggage}`, 30, yPos);
+      yPos += 5;
+      pdf.text(`Kitchen Items: ${formData.boxes.kitchen}`, 30, yPos);
+      yPos += 5;
+      pdf.text(`Clothes & Bedding: ${formData.boxes.clothes}`, 30, yPos);
+      yPos += 5;
+      pdf.text(`Books/Personal Items: ${formData.boxes.booksPersonal}`, 30, yPos);
+      yPos += 10;
+    } else {
+      // Document storage
+      pdf.text(`Storage Type: ${quote.storageType}`, 25, yPos);
+      yPos += 7;
+      pdf.text(`Duration Category: ${quote.durationCategory}`, 25, yPos);
+      yPos += 7;
+      pdf.text(`Box Count: ${quote.boxCount}`, 25, yPos);
+      yPos += 7;
+      pdf.text(`Box Rate: ₹${quote.boxRate}/box/month`, 25, yPos);
+      yPos += 7;
+      pdf.text(`Box Rental: ₹${quote.boxRental?.toLocaleString()}`, 25, yPos);
+      yPos += 7;
+      pdf.text(`Box Charges: ₹${quote.boxCharges?.toLocaleString()}`, 25, yPos);
+      yPos += 7;
+      pdf.setFont(undefined, 'bold');
+      pdf.text(`Total Storage Cost: ₹${quote.totalCost.toLocaleString()}`, 25, yPos);
+      yPos += 15;
+    }
+    
+    // Generated date
+    pdf.setFont(undefined, 'normal');
+    pdf.setFontSize(10);
+    pdf.text(`Generated on: ${format(new Date(), 'PPP')}`, 25, yPos);
+    
+    // Footer
+    const pageHeight = pdf.internal.pageSize.height;
+    pdf.line(20, pageHeight - 30, 190, pageHeight - 30);
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Contact: +9900056394/95 • info@storagians.com', 105, pageHeight - 20, { align: 'center' });
+    
+    // Save the PDF
+    pdf.save(`storage-quote-${formData.customerName.replace(/\s+/g, '-')}.pdf`);
   };
 
   const sendWhatsApp = () => {
