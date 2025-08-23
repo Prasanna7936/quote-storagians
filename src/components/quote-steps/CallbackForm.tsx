@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, User, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CallbackFormProps {
   onSubmit: () => void;
@@ -19,9 +20,10 @@ export const CallbackForm = ({ onSubmit, onCancel }: CallbackFormProps) => {
     email: '',
     remarks: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name.trim() || !formData.mobile.trim()) {
@@ -33,13 +35,38 @@ export const CallbackForm = ({ onSubmit, onCancel }: CallbackFormProps) => {
       return;
     }
 
-    // Simulate form submission
-    toast({
-      title: "Request submitted successfully!",
-      description: "Our team will contact you shortly.",
-    });
+    setIsSubmitting(true);
     
-    onSubmit();
+    try {
+      const { error } = await supabase.functions.invoke('send-callback-email', {
+        body: {
+          name: formData.name.trim(),
+          mobile: formData.mobile.trim(),
+          email: formData.email.trim() || undefined,
+          remarks: formData.remarks.trim() || undefined
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Request submitted successfully!",
+        description: "Our team will contact you shortly.",
+      });
+      
+      onSubmit();
+    } catch (error) {
+      console.error('Error sending callback request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit request. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const updateField = (field: string, value: string) => {
@@ -134,8 +161,9 @@ export const CallbackForm = ({ onSubmit, onCancel }: CallbackFormProps) => {
                 className="flex-1" 
                 size="lg"
                 variant="gradient"
+                disabled={isSubmitting}
               >
-                Submit Request
+                {isSubmitting ? 'Sending...' : 'Submit Request'}
               </Button>
             </div>
           </form>
