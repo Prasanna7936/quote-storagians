@@ -74,24 +74,30 @@ URGENT: Please contact this customer as soon as possible.
     `;
 
     // Send email using Resend
-    try {
-      console.log("📧 Sending callback request email to info@storagians.com");
-      
-      const emailResponse = await resend.emails.send({
-        from: "Storagians <prasanna.7936@gmail.com>", // Use your verified email until domain is verified
-        to: ["prasanna.7936@gmail.com"], // Send to your email for now - change to info@storagians.com after domain verification
-        cc: ["info@storagians.com"], // This will fail until domain is verified, but shows the intent
-        subject: emailSubject,
-        html: emailHtml,
-        text: emailText,
-      });
+    console.log("📧 Sending callback request email...");
+    
+    const emailResponse = await resend.emails.send({
+      from: "Storagians <onboarding@resend.dev>", // Using Resend's verified domain
+      to: ["prasanna.7936@gmail.com"], // Send to your verified email
+      subject: emailSubject,
+      html: emailHtml,
+      text: emailText,
+    });
 
-      console.log("✅ Email sent successfully:", emailResponse);
-      
-    } catch (emailError) {
-      console.error("❌ Failed to send email:", emailError);
-      throw new Error("Failed to send callback email");
+    console.log("📧 Resend API response:", JSON.stringify(emailResponse, null, 2));
+    
+    // Check if there's an error in the response
+    if (emailResponse.error) {
+      console.error("❌ Resend API error:", emailResponse.error);
+      throw new Error(`Email sending failed: ${emailResponse.error.message || emailResponse.error}`);
     }
+    
+    if (!emailResponse.data) {
+      console.error("❌ No data in email response:", emailResponse);
+      throw new Error("Email sending failed: No response data");
+    }
+    
+    console.log("✅ Email sent successfully with ID:", emailResponse.data.id);
 
     return new Response(
       JSON.stringify({ 
