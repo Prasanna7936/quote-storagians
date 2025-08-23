@@ -26,158 +26,314 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
   const downloadQuote = () => {
     const pdf = new jsPDF();
     
-    // Add logo (we'll add a placeholder for now)
-    pdf.setFontSize(20);
+    // Design system colors (HSL to RGB conversion)
+    const primaryColor = [255, 178, 56] as const; // HSL(32, 95%, 58%) -> RGB
+    const primaryGlowColor = [255, 191, 77] as const; // HSL(32, 95%, 68%) -> RGB
+    const backgroundLightColor = [254, 248, 237] as const; // HSL(39, 100%, 97%) -> RGB
+    const mutedTextColor = [115, 115, 115] as const; // HSL(25, 13%, 54%) -> RGB
+    const darkTextColor = [48, 41, 30] as const; // HSL(25, 25%, 12%) -> RGB
+    
+    // Background gradient effect
+    pdf.setFillColor(backgroundLightColor[0], backgroundLightColor[1], backgroundLightColor[2]);
+    pdf.rect(0, 0, 210, 297, 'F');
+    
+    // Header with gradient-style background
+    pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.roundedRect(15, 15, 180, 25, 3, 3, 'F');
+    
+    // Company logo/name in header
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(18);
     pdf.setFont(undefined, 'bold');
-    pdf.text('STORAGIANS', 105, 25, { align: 'center' });
+    pdf.text('STORAGIANS', 105, 32, { align: 'center' });
     
-    // Header
-    pdf.setFontSize(16);
-    pdf.text('STORAGE QUOTE SUMMARY', 105, 40, { align: 'center' });
-    
-    // Line under header
-    pdf.line(20, 45, 190, 45);
+    // Subtitle
+    pdf.setFontSize(12);
+    pdf.text('Your Storage Quote', 105, 37, { align: 'center' });
     
     let yPos = 60;
     
-    // Customer Information
+    // Quote Summary Card (Main Card with Gradient Header)
+    pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.roundedRect(20, yPos - 5, 170, 15, 2, 2, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(14);
     pdf.setFont(undefined, 'bold');
-    pdf.text('Customer Information:', 20, yPos);
-    yPos += 10;
+    pdf.text('QUOTE SUMMARY', 105, yPos + 5, { align: 'center' });
     
-    pdf.setFont(undefined, 'normal');
-    pdf.setFontSize(11);
-    pdf.text(`Name: ${formData.customerName}`, 25, yPos);
-    yPos += 7;
-    pdf.text(`Phone: ${formData.customerPhone}`, 25, yPos);
-    yPos += 7;
-    pdf.text(`Email: ${formData.customerEmail}`, 25, yPos);
-    yPos += 15;
+    // Card body background
+    pdf.setFillColor(255, 255, 255);
+    pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.setLineWidth(0.5);
+    pdf.roundedRect(20, yPos + 10, 170, formData.storageType === 'household' ? 75 : 65, 2, 2, 'FD');
     
-    // Storage Details
-    pdf.setFontSize(14);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('Storage Details:', 20, yPos);
-    yPos += 10;
+    yPos += 25;
     
-    pdf.setFont(undefined, 'normal');
-    pdf.setFontSize(11);
-    pdf.text(`Type: ${formData.storageType.charAt(0).toUpperCase() + formData.storageType.slice(1)} Storage`, 25, yPos);
-    yPos += 7;
-    pdf.text(`Duration: ${formData.duration}`, 25, yPos);
-    yPos += 7;
-    pdf.text(`Location: ${formData.pickupLocation}`, 25, yPos);
-    yPos += 7;
-    pdf.text(`Pickup Date: ${formData.pickupDate ? format(formData.pickupDate, 'PPP') : 'Not specified'}`, 25, yPos);
-    yPos += 15;
-    
-    // Quote Summary based on storage type
-    pdf.setFontSize(14);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('Quote Summary:', 20, yPos);
-    yPos += 10;
-    
-    pdf.setFont(undefined, 'normal');
+    // Quote details with proper styling
+    pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
     pdf.setFontSize(11);
     
     if (formData.storageType === 'household') {
-      if (quote.rentalCharges) {
-        pdf.text(`Rental Charges: ₹${quote.rentalCharges.toLocaleString()}`, 25, yPos);
-        yPos += 7;
-        pdf.text(`Packing Material Charges: ₹${quote.packingMaterialCharges?.toLocaleString()}`, 25, yPos);
-        yPos += 7;
-        pdf.text(`Total Volume: ${quote.totalVolume} cft`, 25, yPos);
-        yPos += 7;
-        pdf.text(`Recommended Vehicle: ${quote.recommendedVehicle} (₹${quote.vehicleCost?.toLocaleString()})`, 25, yPos);
-        yPos += 7;
-        pdf.text(`Labour Required: ${quote.labourCount} persons (₹${quote.labourCost?.toLocaleString()})`, 25, yPos);
-        yPos += 7;
-        pdf.setFont(undefined, 'bold');
-        pdf.text(`Pickup Charges: ₹${quote.pickupCharges?.toLocaleString()}`, 25, yPos);
-        yPos += 15;
-      }
+      // Household storage layout matching web UI
+      pdf.setFont(undefined, 'normal');
       
-      // Items breakdown for household
-      pdf.setFontSize(14);
+      // Rental Charges
+      pdf.text('Rental Charges:', 30, yPos);
       pdf.setFont(undefined, 'bold');
-      pdf.text('Items Breakdown:', 20, yPos);
+      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      pdf.text(`₹${quote.rentalCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
+      yPos += 8;
+      
+      // Packing Material
+      pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Packing Material Charges:', 30, yPos);
+      pdf.setFont(undefined, 'bold');
+      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      pdf.text(`₹${quote.packingMaterialCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
+      yPos += 8;
+      
+      // Total Volume
+      pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Total Volume:', 30, yPos);
+      pdf.setFont(undefined, 'bold');
+      pdf.text(`${quote.totalVolume} cft`, 160, yPos, { align: 'right' });
+      yPos += 8;
+      
+      // Vehicle
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Recommended Vehicle:', 30, yPos);
+      pdf.setFont(undefined, 'bold');
+      pdf.text(`${quote.recommendedVehicle} (₹${quote.vehicleCost?.toLocaleString()})`, 160, yPos, { align: 'right' });
+      yPos += 8;
+      
+      // Labour
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Labour Required:', 30, yPos);
+      pdf.setFont(undefined, 'bold');
+      pdf.text(`${quote.labourCount} (₹${quote.labourCost?.toLocaleString()})`, 160, yPos, { align: 'right' });
       yPos += 10;
       
-      pdf.setFont(undefined, 'normal');
-      pdf.setFontSize(11);
-      
-      // Furniture
-      pdf.setFont(undefined, 'bold');
-      pdf.text('Furniture:', 25, yPos);
-      yPos += 7;
-      pdf.setFont(undefined, 'normal');
-      pdf.text(`Extra Large: ${formData.furniture.extraLarge}`, 30, yPos);
-      yPos += 5;
-      pdf.text(`Large: ${formData.furniture.large}`, 30, yPos);
-      yPos += 5;
-      pdf.text(`Medium: ${formData.furniture.medium}`, 30, yPos);
-      yPos += 5;
-      pdf.text(`Small: ${formData.furniture.small}`, 30, yPos);
+      // Separator line
+      pdf.setDrawColor(mutedTextColor[0], mutedTextColor[1], mutedTextColor[2]);
+      pdf.line(30, yPos, 180, yPos);
       yPos += 10;
       
-      // Appliances
+      // Total Pickup Charges (highlighted)
       pdf.setFont(undefined, 'bold');
-      pdf.text('Appliances:', 25, yPos);
-      yPos += 7;
-      pdf.setFont(undefined, 'normal');
-      pdf.text(`Extra Large: ${formData.appliances.extraLarge}`, 30, yPos);
-      yPos += 5;
-      pdf.text(`Large: ${formData.appliances.large}`, 30, yPos);
-      yPos += 5;
-      pdf.text(`Medium: ${formData.appliances.medium}`, 30, yPos);
-      yPos += 5;
-      pdf.text(`Small: ${formData.appliances.small}`, 30, yPos);
-      yPos += 10;
+      pdf.setFontSize(13);
+      pdf.text('Pickup Charges:', 30, yPos);
+      pdf.setTextColor(primaryGlowColor[0], primaryGlowColor[1], primaryGlowColor[2]);
+      pdf.setFontSize(16);
+      pdf.text(`₹${quote.pickupCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
       
-      // Boxes & Luggage
-      pdf.setFont(undefined, 'bold');
-      pdf.text('Boxes & Luggage:', 25, yPos);
-      yPos += 7;
-      pdf.setFont(undefined, 'normal');
-      pdf.text(`Luggage: ${formData.boxes.luggage}`, 30, yPos);
-      yPos += 5;
-      pdf.text(`Kitchen Items: ${formData.boxes.kitchen}`, 30, yPos);
-      yPos += 5;
-      pdf.text(`Clothes & Bedding: ${formData.boxes.clothes}`, 30, yPos);
-      yPos += 5;
-      pdf.text(`Books/Personal Items: ${formData.boxes.booksPersonal}`, 30, yPos);
-      yPos += 10;
     } else {
-      // Document storage
-      pdf.text(`Storage Type: ${quote.storageType}`, 25, yPos);
-      yPos += 7;
-      pdf.text(`Duration Category: ${quote.durationCategory}`, 25, yPos);
-      yPos += 7;
-      pdf.text(`Box Count: ${quote.boxCount}`, 25, yPos);
-      yPos += 7;
-      pdf.text(`Box Rate: ₹${quote.boxRate}/box/month`, 25, yPos);
-      yPos += 7;
-      pdf.text(`Box Rental: ₹${quote.boxRental?.toLocaleString()}`, 25, yPos);
-      yPos += 7;
-      pdf.text(`Box Charges: ₹${quote.boxCharges?.toLocaleString()}`, 25, yPos);
-      yPos += 7;
+      // Document storage layout
+      pdf.setFont(undefined, 'normal');
+      
+      pdf.text('Storage Type:', 30, yPos);
       pdf.setFont(undefined, 'bold');
-      pdf.text(`Total Storage Cost: ₹${quote.totalCost.toLocaleString()}`, 25, yPos);
-      yPos += 15;
+      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      pdf.text(`${quote.storageType}`, 160, yPos, { align: 'right' });
+      yPos += 8;
+      
+      pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Duration:', 30, yPos);
+      pdf.setFont(undefined, 'bold');
+      pdf.text(`${quote.durationCategory}`, 160, yPos, { align: 'right' });
+      yPos += 8;
+      
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Box Count:', 30, yPos);
+      pdf.setFont(undefined, 'bold');
+      pdf.text(`${quote.boxCount}`, 160, yPos, { align: 'right' });
+      yPos += 8;
+      
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Box Rate:', 30, yPos);
+      pdf.setFont(undefined, 'bold');
+      pdf.text(`₹${quote.boxRate}/box/month`, 160, yPos, { align: 'right' });
+      yPos += 8;
+      
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Box Rental:', 30, yPos);
+      pdf.setFont(undefined, 'bold');
+      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      pdf.text(`₹${quote.boxRental?.toLocaleString()}`, 160, yPos, { align: 'right' });
+      yPos += 8;
+      
+      pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Box Charges:', 30, yPos);
+      pdf.setFont(undefined, 'bold');
+      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      pdf.text(`₹${quote.boxCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
+      yPos += 10;
+      
+      // Separator line
+      pdf.setDrawColor(mutedTextColor[0], mutedTextColor[1], mutedTextColor[2]);
+      pdf.line(30, yPos, 180, yPos);
+      yPos += 10;
+      
+      // Total Cost (highlighted)
+      pdf.setFont(undefined, 'bold');
+      pdf.setFontSize(13);
+      pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
+      pdf.text('Total Storage Cost:', 30, yPos);
+      pdf.setTextColor(primaryGlowColor[0], primaryGlowColor[1], primaryGlowColor[2]);
+      pdf.setFontSize(16);
+      pdf.text(`₹${quote.totalCost.toLocaleString()}`, 160, yPos, { align: 'right' });
     }
     
-    // Generated date
-    pdf.setFont(undefined, 'normal');
-    pdf.setFontSize(10);
-    pdf.text(`Generated on: ${format(new Date(), 'PPP')}`, 25, yPos);
+    yPos += 25;
     
-    // Footer
-    const pageHeight = pdf.internal.pageSize.height;
-    pdf.line(20, pageHeight - 30, 190, pageHeight - 30);
+    // Customer Information Card
+    pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.roundedRect(20, yPos, 80, 12, 2, 2, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(12);
     pdf.setFont(undefined, 'bold');
-    pdf.text('Contact: +9900056394/95 • info@storagians.com', 105, pageHeight - 20, { align: 'center' });
+    pdf.text('CUSTOMER INFORMATION', 60, yPos + 7, { align: 'center' });
+    
+    pdf.setFillColor(255, 255, 255);
+    pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.roundedRect(20, yPos + 12, 80, 30, 2, 2, 'FD');
+    
+    // Customer details
+    pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
+    pdf.setFontSize(10);
+    pdf.setFont(undefined, 'normal');
+    
+    pdf.text('Name:', 25, yPos + 20);
+    pdf.setFont(undefined, 'bold');
+    pdf.text(formData.customerName, 45, yPos + 20);
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.text('Phone:', 25, yPos + 27);
+    pdf.setFont(undefined, 'bold');
+    pdf.text(formData.customerPhone, 45, yPos + 27);
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.text('Email:', 25, yPos + 34);
+    pdf.setFont(undefined, 'bold');
+    pdf.text(formData.customerEmail, 45, yPos + 34);
+    
+    // Pickup Details Card
+    pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.roundedRect(110, yPos, 80, 12, 2, 2, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('PICKUP DETAILS', 150, yPos + 7, { align: 'center' });
+    
+    pdf.setFillColor(255, 255, 255);
+    pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.roundedRect(110, yPos + 12, 80, 30, 2, 2, 'FD');
+    
+    // Pickup details
+    pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
+    pdf.setFontSize(10);
+    pdf.setFont(undefined, 'normal');
+    
+    pdf.text('Type:', 115, yPos + 20);
+    pdf.setFont(undefined, 'bold');
+    pdf.text(formData.storageType.charAt(0).toUpperCase() + formData.storageType.slice(1), 135, yPos + 20);
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.text('Duration:', 115, yPos + 27);
+    pdf.setFont(undefined, 'bold');
+    pdf.text(formData.duration, 145, yPos + 27);
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.text('Location:', 115, yPos + 34);
+    pdf.setFont(undefined, 'bold');
+    pdf.text(formData.pickupLocation, 145, yPos + 34);
+    
+    yPos += 50;
+    
+    // Items Breakdown for Household (if applicable)
+    if (formData.storageType === 'household') {
+      pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      pdf.roundedRect(20, yPos, 170, 12, 2, 2, 'F');
+      
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(12);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('ITEMS BREAKDOWN', 105, yPos + 7, { align: 'center' });
+      
+      pdf.setFillColor(255, 255, 255);
+      pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      pdf.roundedRect(20, yPos + 12, 170, 40, 2, 2, 'FD');
+      
+      yPos += 22;
+      
+      // Furniture column
+      pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
+      pdf.setFontSize(10);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Furniture:', 25, yPos);
+      
+      pdf.setFont(undefined, 'normal');
+      pdf.text(`Extra Large: ${formData.furniture.extraLarge}`, 25, yPos + 6);
+      pdf.text(`Large: ${formData.furniture.large}`, 25, yPos + 12);
+      pdf.text(`Medium: ${formData.furniture.medium}`, 25, yPos + 18);
+      pdf.text(`Small: ${formData.furniture.small}`, 25, yPos + 24);
+      
+      // Appliances column
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Appliances:', 80, yPos);
+      
+      pdf.setFont(undefined, 'normal');
+      pdf.text(`Extra Large: ${formData.appliances.extraLarge}`, 80, yPos + 6);
+      pdf.text(`Large: ${formData.appliances.large}`, 80, yPos + 12);
+      pdf.text(`Medium: ${formData.appliances.medium}`, 80, yPos + 18);
+      pdf.text(`Small: ${formData.appliances.small}`, 80, yPos + 24);
+      
+      // Boxes & Luggage column
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Boxes & Luggage:', 135, yPos);
+      
+      pdf.setFont(undefined, 'normal');
+      pdf.text(`Luggage: ${formData.boxes.luggage}`, 135, yPos + 6);
+      pdf.text(`Kitchen: ${formData.boxes.kitchen}`, 135, yPos + 12);
+      pdf.text(`Clothes: ${formData.boxes.clothes}`, 135, yPos + 18);
+      pdf.text(`Books/Personal: ${formData.boxes.booksPersonal}`, 135, yPos + 24);
+      
+      yPos += 35;
+    }
+    
+    // Disclaimer
+    yPos += 10;
+    pdf.setFillColor(230, 246, 255);
+    pdf.setDrawColor(100, 181, 246);
+    pdf.roundedRect(20, yPos, 170, 15, 2, 2, 'FD');
+    
+    pdf.setTextColor(mutedTextColor[0], mutedTextColor[1], mutedTextColor[2]);
+    pdf.setFontSize(9);
+    pdf.setFont(undefined, 'normal');
+    pdf.text('* This is an estimated quote. Final pricing may vary based on actual', 25, yPos + 6);
+    pdf.text('volume and specific requirements.', 25, yPos + 12);
+    
+    // Generated date
+    yPos += 25;
+    pdf.setTextColor(mutedTextColor[0], mutedTextColor[1], mutedTextColor[2]);
+    pdf.setFontSize(9);
+    pdf.text(`Generated on: ${format(new Date(), 'PPP')}`, 25, yPos);
+    
+    // Footer with gradient background
+    const pageHeight = pdf.internal.pageSize.height;
+    pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    pdf.rect(0, pageHeight - 25, 210, 25, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Contact: +9900056394/95 • info@storagians.com', 105, pageHeight - 15, { align: 'center' });
     
     // Save the PDF
     pdf.save(`storage-quote-${formData.customerName.replace(/\s+/g, '-')}.pdf`);
