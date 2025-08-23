@@ -78,8 +78,9 @@ URGENT: Please contact this customer as soon as possible.
       console.log("📧 Sending callback request email to info@storagians.com");
       
       const emailResponse = await resend.emails.send({
-        from: "Storagians <onboarding@resend.dev>",
-        to: ["info@storagians.com"],
+        from: "Storagians <prasanna.7936@gmail.com>", // Use your verified email until domain is verified
+        to: ["prasanna.7936@gmail.com"], // Send to your email for now - change to info@storagians.com after domain verification
+        cc: ["info@storagians.com"], // This will fail until domain is verified, but shows the intent
         subject: emailSubject,
         html: emailHtml,
         text: emailText,
