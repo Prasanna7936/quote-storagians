@@ -16,12 +16,6 @@ export const StepOne = ({ formData, updateFormData }: StepOneProps) => {
       icon: Home
     },
     {
-      value: 'business',
-      label: 'Business Storage',
-      description: 'Office equipment, inventory, and business assets',
-      icon: Building2
-    },
-    {
       value: 'document',
       label: 'Document Storage',
       description: 'Files, records, and important documents',

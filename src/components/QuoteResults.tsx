@@ -162,42 +162,6 @@ Please contact me for booking.`;
                     </span>
                   </div>
                 </div>
-              ) : formData.storageType === 'business' ? (
-                // Business storage display format
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Storage Space Selected:</span>
-                    <span className="text-lg font-bold text-primary">
-                      {quote.spaceSize}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Duration:</span>
-                    <span className="text-lg font-bold">
-                      {formData.duration.replace('months', ' Months').replace('>', 'More than ')}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Rate per Sq. Ft:</span>
-                    <span className="text-lg font-bold">
-                      ₹{quote.ratePerSqFt}
-                    </span>
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="font-medium">Monthly Rent:</span>
-                    <div className="text-right">
-                      <span className="text-2xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
-                        ₹{quote.monthlyRent?.toLocaleString()}
-                      </span>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        ({quote.spaceSize?.replace('Sq. Ft', '').trim()} Sq. Ft × ₹{quote.ratePerSqFt})
-                      </div>
-                    </div>
-                  </div>
-                </div>
               ) : (
                 // Document storage display format
                 <div className="space-y-4">

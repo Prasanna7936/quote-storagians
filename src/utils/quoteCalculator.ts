@@ -68,37 +68,9 @@ const DURATION_MULTIPLIERS = {
 
 const STORAGE_TYPE_MULTIPLIERS = {
   household: 1.0,
-  business: 1.2,
   document: 0.8
 };
 
-// Business storage rate matrix (₹ per Sq. Ft / Month)
-const BUSINESS_RATE_MATRIX = {
-  'compact': {
-    '1-3months': 50,
-    '3-6months': 48,
-    '6-12months': 45,
-    '>12months': 42
-  },
-  'standard': {
-    '1-3months': 48,
-    '3-6months': 45,
-    '6-12months': 42,
-    '>12months': 38
-  },
-  'large': {
-    '1-3months': 45,
-    '3-6months': 42,
-    '6-12months': 38,
-    '>12months': 35
-  },
-  'custom': {
-    '1-3months': 42,
-    '3-6months': 40,
-    '6-12months': 37,
-    '>12months': 35
-  }
-};
 
 // Document storage rate matrix (₹ per box per month)
 const DOCUMENT_RATE_MATRIX = {
@@ -123,7 +95,6 @@ export const calculateQuote = (formData: QuoteFormData): QuoteResult => {
   console.log('Calculating quote for:', {
     storageType: formData.storageType,
     duration: formData.duration,
-    businessSpaceSize: formData.businessSpaceSize,
     documentStorageType: formData.documentStorageType,
     documentBoxCount: formData.documentBoxCount,
     documentBoxRequirement: formData.documentBoxRequirement
@@ -131,10 +102,6 @@ export const calculateQuote = (formData: QuoteFormData): QuoteResult => {
 
   if (formData.storageType === 'household') {
     return calculateHouseholdQuote(formData);
-  }
-  
-  if (formData.storageType === 'business') {
-    return calculateBusinessQuote(formData);
   }
   
   if (formData.storageType === 'document') {
@@ -296,80 +263,6 @@ const calculateHouseholdQuote = (formData: QuoteFormData): QuoteResult => {
   };
 };
 
-const calculateBusinessQuote = (formData: QuoteFormData): QuoteResult => {
-  // Get space size and duration
-  const spaceSize = formData.businessSpaceSize || 'standard';
-  const duration = formData.duration;
-  
-  // Get rate from matrix
-  const ratePerSqFt = BUSINESS_RATE_MATRIX[spaceSize]?.[duration] || BUSINESS_RATE_MATRIX['standard'][duration];
-  
-  // For business, we'll assume a base area calculation based on items
-  // This is a simplified calculation - in real scenario, actual sq ft would be provided
-  const furnitureVolume = 
-    formData.furniture.extraLarge * FURNITURE_RATES.extraLarge +
-    formData.furniture.large * FURNITURE_RATES.large +
-    formData.furniture.medium * FURNITURE_RATES.medium +
-    formData.furniture.small * FURNITURE_RATES.small;
-
-  const appliancesVolume = 
-    formData.appliances.extraLarge * APPLIANCE_RATES.extraLarge +
-    formData.appliances.large * APPLIANCE_RATES.large +
-    formData.appliances.medium * APPLIANCE_RATES.medium +
-    formData.appliances.small * APPLIANCE_RATES.small;
-
-  const boxesVolume = 
-    formData.boxes.luggage * BOX_RATES.luggage +
-    formData.boxes.kitchen * BOX_RATES.kitchen +
-    formData.boxes.clothes * BOX_RATES.clothes +
-    formData.boxes.booksPersonal * BOX_RATES.booksPersonal;
-
-  const totalVolume = furnitureVolume + appliancesVolume + boxesVolume;
-  
-  // Convert volume to approximate square footage (rough estimation)
-  const estimatedSqFt = Math.max(100, Math.round(totalVolume * 0.7)); // Minimum 100 sq ft
-  
-  const monthlyRent = estimatedSqFt * ratePerSqFt;
-  
-  const furnitureItems = Object.values(formData.furniture).reduce((a, b) => a + b, 0);
-  const applianceItems = Object.values(formData.appliances).reduce((a, b) => a + b, 0);
-  const boxItems = Object.values(formData.boxes).reduce((a, b) => a + b, 0);
-  const totalItems = furnitureItems + applianceItems + boxItems;
-  
-  let totalCost = monthlyRent;
-  switch (formData.duration) {
-    case '1-3months':
-      totalCost = monthlyRent * 2.5;
-      break;
-    case '3-6months':
-      totalCost = monthlyRent * 4.5;
-      break;
-    case '6-12months':
-      totalCost = monthlyRent * 9;
-      break;
-    case '>12months':
-      totalCost = monthlyRent * 15;
-      break;
-  }
-
-  return {
-    totalItems,
-    estimatedVolume: Math.round(totalVolume),
-    monthlyRate: Math.round(monthlyRent),
-    totalCost: Math.round(totalCost),
-    breakdown: {
-      furniture: 0,
-      appliances: 0,
-      boxes: 0,
-      baseRate: Math.round(monthlyRent),
-      durationMultiplier: 1
-    },
-    // Business storage specific fields
-    spaceSize: `${estimatedSqFt} Sq. Ft (${spaceSize.charAt(0).toUpperCase() + spaceSize.slice(1)})`,
-    ratePerSqFt,
-    monthlyRent: Math.round(monthlyRent)
-  };
-};
 
 const calculateDocumentQuote = (formData: QuoteFormData): QuoteResult => {
   // Map form data to lookup table keys

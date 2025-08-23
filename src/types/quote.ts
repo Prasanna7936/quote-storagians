@@ -1,4 +1,4 @@
-export type StorageType = 'household' | 'business' | 'document' | 'callback';
+export type StorageType = 'household' | 'document' | 'callback';
 
 export type DurationType = '1-3months' | '3-6months' | '6-12months' | '>12months';
 
@@ -25,9 +25,6 @@ export interface BoxItems {
 
 export type DeliveryMethod = 'pickup' | 'third-party' | 'self-drop';
 
-export type BusinessGoodsType = 'new' | 'used';
-export type BusinessGoodsCategory = 'electronics' | 'fmcg' | 'office-furniture' | 'kitchen-hotel' | 'others';
-export type BusinessSpaceSize = 'compact' | 'standard' | 'large' | 'custom';
 
 export type DocumentBoxRequirement = 'need-fresh' | 'ready-to-ship';
 export type DocumentStorageType = 'rack' | 'pallet';
@@ -46,10 +43,6 @@ export interface QuoteFormData {
   customerPhone: string;
   customerEmail: string;
   
-  // Business storage specific fields
-  businessGoodsType?: BusinessGoodsType;
-  businessGoodsCategory?: BusinessGoodsCategory;
-  businessSpaceSize?: BusinessSpaceSize;
   documentBoxRequirement?: DocumentBoxRequirement;
   documentStorageType?: DocumentStorageType;
   documentBoxCount?: DocumentBoxCount;
@@ -76,10 +69,6 @@ export interface QuoteResult {
   labourCount?: number;
   labourCost?: number;
   pickupCharges?: number;
-  // Business storage calculation fields
-  spaceSize?: string;
-  ratePerSqFt?: number;
-  monthlyRent?: number;
   // Document storage calculation fields
   storageType?: string;
   durationCategory?: string;

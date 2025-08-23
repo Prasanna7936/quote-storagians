@@ -13,9 +13,6 @@ import { StepSix } from './quote-steps/StepSix';
 import { StepSeven } from './quote-steps/StepSeven';
 import { StepEight } from './quote-steps/StepEight';
 import { CallbackForm } from './quote-steps/CallbackForm';
-import { BusinessStepThree } from './quote-steps/BusinessStepThree';
-import { BusinessStepFour } from './quote-steps/BusinessStepFour';
-import { BusinessStepFive } from './quote-steps/BusinessStepFive';
 import { DocumentStepThree } from './quote-steps/DocumentStepThree';
 import { DocumentStepFour } from './quote-steps/DocumentStepFour';
 import { DocumentStepFive } from './quote-steps/DocumentStepFive';
@@ -23,7 +20,6 @@ import { QuoteResults } from './QuoteResults';
 import { calculateQuote } from '@/utils/quoteCalculator';
 
 const TOTAL_STEPS = 8;
-const BUSINESS_TOTAL_STEPS = 8;
 const DOCUMENT_TOTAL_STEPS = 8;
 
 const initialFormData: QuoteFormData = {
@@ -38,9 +34,6 @@ const initialFormData: QuoteFormData = {
   customerName: '',
   customerPhone: '',
   customerEmail: '',
-  businessGoodsType: undefined,
-  businessGoodsCategory: undefined,
-  businessSpaceSize: undefined,
   documentBoxRequirement: undefined,
   documentStorageType: undefined,
   documentBoxCount: undefined,
@@ -55,9 +48,8 @@ export const QuoteGenerator = () => {
     setFormData(prev => ({ ...prev, ...updates }));
   };
 
-  const isBusinessFlow = formData.storageType === 'business';
   const isDocumentFlow = formData.storageType === 'document';
-  const maxSteps = isBusinessFlow ? BUSINESS_TOTAL_STEPS : isDocumentFlow ? DOCUMENT_TOTAL_STEPS : TOTAL_STEPS;
+  const maxSteps = isDocumentFlow ? DOCUMENT_TOTAL_STEPS : TOTAL_STEPS;
 
   const nextStep = () => {
     // If callback is selected, skip to step 2 (callback form)
@@ -110,19 +102,7 @@ export const QuoteGenerator = () => {
   const getStepTitle = (step: number) => {
     const isDropMethod = formData.deliveryMethod === 'self-drop' || formData.deliveryMethod === 'third-party';
     
-    if (isBusinessFlow) {
-      switch (step) {
-        case 1: return 'Storage Type';
-        case 2: return 'Duration';
-        case 3: return 'Goods Type';
-        case 4: return 'Goods Category';
-        case 5: return 'Space Size';
-        case 6: return 'Delivery Method';
-        case 7: return isDropMethod ? 'Drop Details' : 'Pickup Details';
-        case 8: return 'Your Information';
-        default: return 'Step';
-      }
-    } else if (isDocumentFlow) {
+    if (isDocumentFlow) {
       switch (step) {
         case 1: return 'Storage Type';
         case 2: return 'Duration';
@@ -239,114 +219,38 @@ export const QuoteGenerator = () => {
                 updateFormData={updateFormData} 
               />
             )}
-            {/* Business Flow Steps */}
-            {currentStep === 3 && isBusinessFlow && (
-              <BusinessStepThree 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            {currentStep === 4 && isBusinessFlow && (
-              <BusinessStepFour 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            {currentStep === 5 && isBusinessFlow && (
-              <BusinessStepFive 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            {currentStep === 6 && isBusinessFlow && (
-              <StepSix 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            {currentStep === 7 && isBusinessFlow && (
-              <StepSeven 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            {currentStep === 8 && isBusinessFlow && (
-              <StepEight 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            
-            {/* Document Flow Steps */}
-            {currentStep === 3 && isDocumentFlow && (
-              <DocumentStepThree 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            {currentStep === 4 && isDocumentFlow && (
-              <DocumentStepFour 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            {currentStep === 5 && isDocumentFlow && (
-              <DocumentStepFive 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            {currentStep === 6 && isDocumentFlow && (
-              <StepSix 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            {currentStep === 7 && isDocumentFlow && (
-              <StepSeven 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            {currentStep === 8 && isDocumentFlow && (
-              <StepEight 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
-            )}
-            
             {/* Household Flow Steps */}
-            {currentStep === 3 && !isBusinessFlow && !isDocumentFlow && (
+            {currentStep === 3 && !isDocumentFlow && (
               <StepThree 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 4 && !isBusinessFlow && !isDocumentFlow && (
+            {currentStep === 4 && !isDocumentFlow && (
               <StepFour 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 5 && !isBusinessFlow && !isDocumentFlow && (
+            {currentStep === 5 && !isDocumentFlow && (
               <StepFive 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 6 && !isBusinessFlow && !isDocumentFlow && (
+            {currentStep === 6 && !isDocumentFlow && (
               <StepSix 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 7 && !isBusinessFlow && !isDocumentFlow && (
+            {currentStep === 7 && !isDocumentFlow && (
               <StepSeven 
                 formData={formData} 
                 updateFormData={updateFormData} 
               />
             )}
-            {currentStep === 8 && !isBusinessFlow && !isDocumentFlow && (
+            {currentStep === 8 && !isDocumentFlow && (
               <StepEight 
                 formData={formData} 
                 updateFormData={updateFormData} 
