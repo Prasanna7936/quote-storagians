@@ -1,4 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { Resend } from "npm:resend@2.0.0";
+
+const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -70,57 +73,23 @@ Customer Details:
 URGENT: Please contact this customer as soon as possible.
     `;
 
-    // Send email using ZOHO SMTP
+    // Send email using Resend
     try {
-      const zohoEmail = Deno.env.get("ZOHO_EMAIL");
-      const zohoPassword = Deno.env.get("ZOHO_EMAIL_PASSWORD");
-
-      if (!zohoEmail || !zohoPassword) {
-        console.error("❌ ZOHO email credentials not configured");
-        throw new Error("Email configuration missing");
-      }
-
-      // Simple SMTP implementation using fetch to a reliable email service
-      // Using a basic approach that works with ZOHO SMTP
-      const emailData = {
-        personalizations: [
-          {
-            to: [{ email: "info@storagians.com" }],
-            subject: emailSubject
-          }
-        ],
-        from: { email: zohoEmail },
-        content: [
-          {
-            type: "text/html",
-            value: emailHtml
-          },
-          {
-            type: "text/plain", 
-            value: emailText
-          }
-        ]
-      };
-
-      // For now, let's use a webhook approach to ensure delivery
-      // This will log the email content in a structured way for manual sending
-      console.log("📧 ✅ Processing callback request for info@storagians.com");
-      console.log("📋 EMAIL DETAILS:");
-      console.log("From:", zohoEmail);
-      console.log("To: info@storagians.com");
-      console.log("Subject:", emailSubject);
-      console.log("📞 CUSTOMER INFO:");
-      console.log("Name:", name);
-      console.log("Mobile:", mobile);
-      console.log("Email:", email || 'Not provided');
-      console.log("Remarks:", remarks || 'None');
-      console.log("Time:", new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
+      console.log("📧 Sending callback request email to info@storagians.com");
       
-      // Note: You can set up ZOHO SMTP integration manually or use the logged info
+      const emailResponse = await resend.emails.send({
+        from: "Storagians <onboarding@resend.dev>",
+        to: ["info@storagians.com"],
+        subject: emailSubject,
+        html: emailHtml,
+        text: emailText,
+      });
+
+      console.log("✅ Email sent successfully:", emailResponse);
       
     } catch (emailError) {
-      console.error("📧 Email processing error:", emailError);
-      // Continue processing even if email fails
+      console.error("❌ Failed to send email:", emailError);
+      throw new Error("Failed to send callback email");
     }
 
     return new Response(
