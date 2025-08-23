@@ -77,8 +77,9 @@ URGENT: Please contact this customer as soon as possible.
     console.log("📧 Sending callback request email...");
     
     const emailResponse = await resend.emails.send({
-      from: "Storagians Callback <onboarding@resend.dev>", // Using Resend's verified domain
-      to: ["prasanna.7936@gmail.com"], // Temporary: send to verified email until domain is verified
+      from: "Storagians Contact <contact@storagians.com>",
+      to: ["info@storagians.com"],
+      replyTo: "info@storagians.com",
       subject: emailSubject,
       html: emailHtml,
       text: emailText,
@@ -95,8 +96,7 @@ URGENT: Please contact this customer as soon as possible.
     }
     
     console.log("✅ Email sent successfully with ID:", emailResponse.data.id);
-    console.log("📧 NOTE: Email sent to prasanna.7936@gmail.com (verified email)");
-    console.log("📧 TO RECEIVE AT info@storagians.com: Verify domain at https://resend.com/domains");
+    console.log("📧 Email delivered to info@storagians.com");
 
     return new Response(
       JSON.stringify({ 
