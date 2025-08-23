@@ -40,8 +40,6 @@ export const StepOne = ({ formData, updateFormData }: StepOneProps) => {
 
       {/* Storage Types Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-center">Storage Solutions</h3>
-        <p className="text-sm text-muted-foreground text-center">Complete 8-step process for instant quote</p>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto">
           {storageOptions.map((option) => {
             const Icon = option.icon;
@@ -95,7 +93,6 @@ export const StepOne = ({ formData, updateFormData }: StepOneProps) => {
       {/* Callback Section */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-center">Need Help?</h3>
-        <p className="text-sm text-muted-foreground text-center">Quick 2-step process to get expert assistance</p>
         <div className="max-w-sm mx-auto">
           <Card 
             className={`cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
