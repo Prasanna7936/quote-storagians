@@ -42,6 +42,7 @@ export interface QuoteFormData {
   customerName: string;
   customerPhone: string;
   customerEmail: string;
+  distanceKm?: number;
   
   documentBoxRequirement?: DocumentBoxRequirement;
   documentStorageType?: DocumentStorageType;

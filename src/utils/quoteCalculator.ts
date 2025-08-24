@@ -29,10 +29,10 @@ const VOLUME_RATES = {
 };
 
 const VEHICLE_OPTIONS = [
-  { minVolume: 0, maxVolume: 500, name: 'Tata Ace', cost: 1200 },
-  { minVolume: 501, maxVolume: 900, name: 'Bolero Pickup', cost: 1800 },
-  { minVolume: 901, maxVolume: 1400, name: 'Eicher 14ft', cost: 2800 },
-  { minVolume: 1401, maxVolume: Infinity, name: 'Eicher 17ft', cost: 3600 }
+  { minVolume: 0, maxVolume: 500, name: 'Tata Ace', ratePerKm: 30, minimum: 350 },
+  { minVolume: 501, maxVolume: 900, name: 'Bolero Pickup', ratePerKm: 35, minimum: 500 },
+  { minVolume: 901, maxVolume: 1400, name: 'Eicher 14ft', ratePerKm: 45, minimum: 900 },
+  { minVolume: 1401, maxVolume: Infinity, name: 'Eicher 17ft', ratePerKm: 55, minimum: 1200 }
 ];
 
 const LABOUR_COST_PER_PERSON = 800;
@@ -250,8 +250,10 @@ const calculateHouseholdQuote = (formData: QuoteFormData): QuoteResult => {
   }
   const labourCost = labourCount * LABOUR_COST_PER_PERSON;
   
-  // 6. Pickup Charges
-  const pickupCharges = packingMaterialCharges + labourCost + vehicle.cost;
+  // 6. Pickup Charges (distance-based calculation)
+  const distance = formData.distanceKm || 0;
+  const vehicleCost = Math.max(vehicle.minimum, distance * vehicle.ratePerKm);
+  const pickupCharges = packingMaterialCharges + labourCost + vehicleCost;
   
   return {
     totalItems,
@@ -270,7 +272,7 @@ const calculateHouseholdQuote = (formData: QuoteFormData): QuoteResult => {
     packingMaterialCharges,
     totalVolume,
     recommendedVehicle: vehicle.name,
-    vehicleCost: vehicle.cost,
+    vehicleCost,
     labourCount,
     labourCost,
     pickupCharges

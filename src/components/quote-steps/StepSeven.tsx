@@ -6,9 +6,11 @@ import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { MapPin, Calendar as CalendarIcon, Truck, Package2 } from 'lucide-react';
+import { MapPin, Calendar as CalendarIcon, Truck, Package2, Navigation } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 
 interface StepSevenProps {
   formData: QuoteFormData;
@@ -18,6 +20,72 @@ interface StepSevenProps {
 export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
   const isThirdPartyDrop = formData.deliveryMethod === 'third-party';
   const isDropMethod = isThirdPartyDrop;
+  const [isCalculatingDistance, setIsCalculatingDistance] = useState(false);
+  const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null);
+
+  // Calculate distance when pickup location changes
+  useEffect(() => {
+    if (formData.pickupLocation && formData.deliveryMethod === 'pickup' && formData.pickupLocation.trim().length > 10) {
+      calculateDistance(formData.pickupLocation);
+    }
+  }, [formData.pickupLocation, formData.deliveryMethod]);
+
+  const calculateDistance = async (address: string) => {
+    setIsCalculatingDistance(true);
+    try {
+      // Geocode the entered address
+      const addressResponse = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${import.meta.env.VITE_MAPBOX_TOKEN || 'YOUR_MAPBOX_TOKEN'}&country=IN&proximity=77.594566,12.971599&limit=1`
+      );
+      
+      if (!addressResponse.ok) {
+        throw new Error('Failed to geocode address');
+      }
+      
+      const addressData = await addressResponse.json();
+      
+      if (!addressData.features || addressData.features.length === 0) {
+        throw new Error('Address not found');
+      }
+      
+      const [userLng, userLat] = addressData.features[0].center;
+      
+      // Warehouse coordinates (Seegehalli)
+      const warehouseLat = 13.013647;
+      const warehouseLng = 77.677803;
+      
+      // Calculate distance using Mapbox Directions API
+      const directionsResponse = await fetch(
+        `https://api.mapbox.com/directions/v5/mapbox/driving/${userLng},${userLat};${warehouseLng},${warehouseLat}?access_token=${import.meta.env.VITE_MAPBOX_TOKEN || 'YOUR_MAPBOX_TOKEN'}&geometries=geojson`
+      );
+      
+      if (!directionsResponse.ok) {
+        throw new Error('Failed to calculate distance');
+      }
+      
+      const directionsData = await directionsResponse.json();
+      
+      if (!directionsData.routes || directionsData.routes.length === 0) {
+        throw new Error('No route found');
+      }
+      
+      const distanceInMeters = directionsData.routes[0].distance;
+      const distanceInKm = Math.round(distanceInMeters / 1000);
+      
+      setCalculatedDistance(distanceInKm);
+      updateFormData({ distanceKm: distanceInKm });
+      
+      toast.success(`Distance calculated: ${distanceInKm} km from warehouse`);
+      
+    } catch (error) {
+      console.error('Distance calculation error:', error);
+      toast.error('Could not calculate distance. Please verify the address.');
+      setCalculatedDistance(null);
+      updateFormData({ distanceKm: undefined });
+    } finally {
+      setIsCalculatingDistance(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -95,14 +163,29 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
               </div>
             </div>
           ) : (
-            <Input
-              id="location"
-              type="text"
-              placeholder="Enter your address"
-              value={formData.pickupLocation}
-              onChange={(e) => updateFormData({ pickupLocation: e.target.value })}
-              className="text-base"
-            />
+            <div className="space-y-2">
+              <Input
+                id="location"
+                type="text"
+                placeholder="Enter your complete address"
+                value={formData.pickupLocation}
+                onChange={(e) => updateFormData({ pickupLocation: e.target.value })}
+                className="text-base"
+                required
+              />
+              {isCalculatingDistance && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Navigation className="w-4 h-4 animate-spin" />
+                  Calculating distance...
+                </div>
+              )}
+              {calculatedDistance !== null && (
+                <div className="flex items-center gap-2 text-sm text-primary">
+                  <Navigation className="w-4 h-4" />
+                  Distance to warehouse: {calculatedDistance} km
+                </div>
+              )}
+            </div>
           )}
         </div>
 

@@ -20,6 +20,7 @@ import { QuoteResults } from './QuoteResults';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { calculateQuote } from '@/utils/quoteCalculator';
+import { MapboxSetup } from './MapboxSetup';
 
 const TOTAL_STEPS = 8;
 const DOCUMENT_TOTAL_STEPS = 8;
@@ -58,6 +59,16 @@ export const QuoteGenerator = () => {
     // If callback is selected, skip to step 2 (callback form)
     if (formData.storageType === 'callback' && currentStep === 1) {
       setCurrentStep(2);
+      return;
+    }
+    
+    // Validate pickup location for step 7 when pickup method is selected
+    if (currentStep === 7 && formData.deliveryMethod === 'pickup' && !formData.pickupLocation.trim()) {
+      toast({
+        title: "Pickup location required",
+        description: "Please enter your pickup location to continue.",
+        variant: "destructive",
+      });
       return;
     }
     
@@ -288,10 +299,13 @@ export const QuoteGenerator = () => {
               />
             )}
             {currentStep === 7 && !isDocumentFlow && (
-              <StepSeven 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
+              <>
+                <MapboxSetup />
+                <StepSeven 
+                  formData={formData} 
+                  updateFormData={updateFormData} 
+                />
+              </>
             )}
             {currentStep === 8 && !isDocumentFlow && (
               <StepEight 
@@ -326,10 +340,13 @@ export const QuoteGenerator = () => {
               />
             )}
             {currentStep === 7 && isDocumentFlow && (
-              <StepSeven 
-                formData={formData} 
-                updateFormData={updateFormData} 
-              />
+              <>
+                <MapboxSetup />
+                <StepSeven 
+                  formData={formData} 
+                  updateFormData={updateFormData} 
+                />
+              </>
             )}
             {currentStep === 8 && isDocumentFlow && (
               <StepEight 
