@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { MapPin, Calendar as CalendarIcon, Truck, Package2, Navigation } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
 interface StepSevenProps {
@@ -22,54 +22,86 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
   const isDropMethod = isThirdPartyDrop;
   const [isCalculatingDistance, setIsCalculatingDistance] = useState(false);
   const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null);
+  const autocompleteRef = useRef<HTMLInputElement>(null);
+  const [autocompleteService, setAutocompleteService] = useState<any>(null);
 
-  // Calculate distance when pickup location changes
+  // Initialize Google Places
+  useEffect(() => {
+    const loadGoogleMaps = () => {
+      if (window.google && window.google.maps) {
+        setAutocompleteService(new window.google.maps.places.AutocompleteService());
+        
+        if (autocompleteRef.current) {
+          const autocomplete = new window.google.maps.places.Autocomplete(autocompleteRef.current, {
+            componentRestrictions: { country: 'in' },
+            fields: ['formatted_address', 'geometry'],
+            types: ['address']
+          });
+
+          autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace();
+            if (place.formatted_address) {
+              updateFormData({ pickupLocation: place.formatted_address });
+              calculateDistance(place.formatted_address);
+            }
+          });
+        }
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY'}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      script.onload = () => loadGoogleMaps();
+      document.head.appendChild(script);
+    };
+
+    loadGoogleMaps();
+  }, []);
+
+  // Calculate distance when pickup location changes manually
   useEffect(() => {
     if (formData.pickupLocation && formData.deliveryMethod === 'pickup' && formData.pickupLocation.trim().length > 10) {
-      calculateDistance(formData.pickupLocation);
+      const timeoutId = setTimeout(() => {
+        calculateDistance(formData.pickupLocation);
+      }, 1000);
+      return () => clearTimeout(timeoutId);
     }
   }, [formData.pickupLocation, formData.deliveryMethod]);
 
   const calculateDistance = async (address: string) => {
     setIsCalculatingDistance(true);
     try {
-      // Geocode the entered address
-      const addressResponse = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${import.meta.env.VITE_MAPBOX_TOKEN || 'YOUR_MAPBOX_TOKEN'}&country=IN&proximity=77.594566,12.971599&limit=1`
-      );
-      
-      if (!addressResponse.ok) {
-        throw new Error('Failed to geocode address');
-      }
-      
-      const addressData = await addressResponse.json();
-      
-      if (!addressData.features || addressData.features.length === 0) {
-        throw new Error('Address not found');
-      }
-      
-      const [userLng, userLat] = addressData.features[0].center;
-      
       // Warehouse coordinates (Seegehalli)
-      const warehouseLat = 13.013647;
-      const warehouseLng = 77.677803;
+      const warehouseAddress = 'Seegehalli, Bengaluru, Karnataka, India';
       
-      // Calculate distance using Mapbox Directions API
-      const directionsResponse = await fetch(
-        `https://api.mapbox.com/directions/v5/mapbox/driving/${userLng},${userLat};${warehouseLng},${warehouseLat}?access_token=${import.meta.env.VITE_MAPBOX_TOKEN || 'YOUR_MAPBOX_TOKEN'}&geometries=geojson`
+      // Calculate distance using Google Distance Matrix API
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(address)}&destinations=${encodeURIComponent(warehouseAddress)}&units=metric&mode=driving&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY'}`
       );
       
-      if (!directionsResponse.ok) {
+      if (!response.ok) {
         throw new Error('Failed to calculate distance');
       }
       
-      const directionsData = await directionsResponse.json();
+      const data = await response.json();
       
-      if (!directionsData.routes || directionsData.routes.length === 0) {
-        throw new Error('No route found');
+      if (data.status !== 'OK') {
+        throw new Error(`API Error: ${data.status}`);
       }
       
-      const distanceInMeters = directionsData.routes[0].distance;
+      if (!data.rows || data.rows.length === 0 || !data.rows[0].elements || data.rows[0].elements.length === 0) {
+        throw new Error('No distance data found');
+      }
+      
+      const element = data.rows[0].elements[0];
+      
+      if (element.status !== 'OK') {
+        throw new Error(`Distance calculation failed: ${element.status}`);
+      }
+      
+      const distanceInMeters = element.distance.value;
       const distanceInKm = Math.round(distanceInMeters / 1000);
       
       setCalculatedDistance(distanceInKm);
@@ -165,6 +197,7 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
           ) : (
             <div className="space-y-2">
               <Input
+                ref={autocompleteRef}
                 id="location"
                 type="text"
                 placeholder="Enter your complete address"

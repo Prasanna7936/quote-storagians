@@ -20,7 +20,7 @@ import { QuoteResults } from './QuoteResults';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { calculateQuote } from '@/utils/quoteCalculator';
-import { MapboxSetup } from './MapboxSetup';
+import { GoogleMapsSetup } from './GoogleMapsSetup';
 
 const TOTAL_STEPS = 8;
 const DOCUMENT_TOTAL_STEPS = 8;
@@ -300,7 +300,7 @@ export const QuoteGenerator = () => {
             )}
             {currentStep === 7 && !isDocumentFlow && (
               <>
-                <MapboxSetup />
+      <GoogleMapsSetup />
                 <StepSeven 
                   formData={formData} 
                   updateFormData={updateFormData} 
@@ -341,7 +341,7 @@ export const QuoteGenerator = () => {
             )}
             {currentStep === 7 && isDocumentFlow && (
               <>
-                <MapboxSetup />
+                <GoogleMapsSetup />
                 <StepSeven 
                   formData={formData} 
                   updateFormData={updateFormData} 
