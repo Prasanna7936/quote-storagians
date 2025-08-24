@@ -205,6 +205,16 @@ const calculateHouseholdQuote = (formData: QuoteFormData): QuoteResult => {
   );
   
   // 3. Volume Calculation (includes furniture/appliances/luggages/boxes)
+  console.log('Volume calculation debug:', {
+    extraLarge, large, medium, small, luggages, boxes,
+    extraLargeVol: extraLarge * VOLUME_RATES.extraLarge,
+    largeVol: large * VOLUME_RATES.large,
+    mediumVol: medium * VOLUME_RATES.medium,
+    smallVol: small * VOLUME_RATES.small,
+    luggageVol: luggages * VOLUME_RATES.luggage,
+    boxesVol: boxes * VOLUME_RATES.boxes
+  });
+  
   const totalVolume = Math.round(
     (extraLarge * VOLUME_RATES.extraLarge) +
     (large * VOLUME_RATES.large) +
