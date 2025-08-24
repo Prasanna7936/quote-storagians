@@ -158,39 +158,18 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       yPos += 8;
       
       pdf.setFont(undefined, 'normal');
-      pdf.text('Box Rate:', 30, yPos);
-      pdf.setFont(undefined, 'bold');
-      pdf.text(`₹${quote.boxRate}/box/month`, 160, yPos, { align: 'right' });
-      yPos += 8;
-      
-      pdf.setFont(undefined, 'normal');
-      pdf.text('Box Rental:', 30, yPos);
+      pdf.text('Monthly Storage Rental:', 30, yPos);
       pdf.setFont(undefined, 'bold');
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`₹${quote.boxRental?.toLocaleString()}`, 160, yPos, { align: 'right' });
+      pdf.text(`₹${quote.boxRate} per box`, 160, yPos, { align: 'right' });
       yPos += 8;
       
       pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
       pdf.setFont(undefined, 'normal');
-      pdf.text('Box Charges:', 30, yPos);
+      pdf.text('One-Time New Box Charge:', 30, yPos);
       pdf.setFont(undefined, 'bold');
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`₹${quote.boxCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
-      yPos += 10;
-      
-      // Separator line
-      pdf.setDrawColor(mutedTextColor[0], mutedTextColor[1], mutedTextColor[2]);
-      pdf.line(30, yPos, 180, yPos);
-      yPos += 10;
-      
-      // Total Cost (highlighted)
-      pdf.setFont(undefined, 'bold');
-      pdf.setFontSize(13);
-      pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
-      pdf.text('Total Storage Cost:', 30, yPos);
-      pdf.setTextColor(primaryGlowColor[0], primaryGlowColor[1], primaryGlowColor[2]);
-      pdf.setFontSize(16);
-      pdf.text(`₹${quote.totalCost.toLocaleString()}`, 160, yPos, { align: 'right' });
+      pdf.text(`₹${quote.boxCharges?.toLocaleString()} per box`, 160, yPos, { align: 'right' });
     }
     
     yPos += 25;
@@ -487,30 +466,15 @@ Please contact me for booking.`;
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="font-medium">Box Rate:</span>
-                    <span className="text-lg font-bold">
-                      ₹{quote.boxRate}/box/month
+                    <span className="font-medium">Monthly Storage Rental:</span>
+                    <span className="text-lg font-bold text-primary">
+                      ₹{quote.boxRate} per box
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="font-medium">Box Rental:</span>
+                    <span className="font-medium">One-Time New Box Charge:</span>
                     <span className="text-lg font-bold text-primary">
-                      ₹{quote.boxRental?.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Box Charges:</span>
-                    <span className="text-lg font-bold text-primary">
-                      ₹{quote.boxCharges?.toLocaleString()}
-                    </span>
-                  </div>
-                  
-                  <Separator />
-                  
-                  <div className="flex justify-between items-center text-lg">
-                    <span className="font-medium">Total Storage Cost:</span>
-                    <span className="text-2xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
-                      ₹{quote.totalCost.toLocaleString()}
+                      ₹{quote.boxCharges?.toLocaleString()} per box
                     </span>
                   </div>
                 </div>
