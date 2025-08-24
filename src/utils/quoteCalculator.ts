@@ -23,7 +23,9 @@ const VOLUME_RATES = {
   extraLarge: 165, // cft per item
   large: 95,
   medium: 45,
-  small: 20
+  small: 20,
+  luggage: 18,
+  boxes: 28
 };
 
 const VEHICLE_OPTIONS = [
@@ -202,12 +204,14 @@ const calculateHouseholdQuote = (formData: QuoteFormData): QuoteResult => {
      (boxes * PACKING_MATERIAL_RATES.boxes)) * packingMaterialAdjustmentFactor
   );
   
-  // 3. Volume Calculation (only for furniture/appliances)
+  // 3. Volume Calculation (includes furniture/appliances/luggages/boxes)
   const totalVolume = Math.round(
     (extraLarge * VOLUME_RATES.extraLarge) +
     (large * VOLUME_RATES.large) +
     (medium * VOLUME_RATES.medium) +
-    (small * VOLUME_RATES.small)
+    (small * VOLUME_RATES.small) +
+    (luggages * VOLUME_RATES.luggage) +
+    (boxes * VOLUME_RATES.boxes)
   );
   
   // 4. Vehicle Selection
