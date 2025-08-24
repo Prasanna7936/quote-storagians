@@ -154,7 +154,7 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.setFont(undefined, 'normal');
       pdf.text('Box Count:', 30, yPos);
       pdf.setFont(undefined, 'bold');
-      pdf.text(`${quote.boxCount}`, 160, yPos, { align: 'right' });
+      pdf.text(`${formData.documentBoxCount}`, 160, yPos, { align: 'right' });
       yPos += 8;
       
       pdf.setFont(undefined, 'normal');
@@ -462,7 +462,7 @@ Please contact me for booking.`;
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Box Count:</span>
                     <span className="text-lg font-bold">
-                      {quote.boxCount}
+                      {formData.documentBoxCount}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
