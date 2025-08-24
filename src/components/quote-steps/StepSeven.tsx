@@ -73,48 +73,69 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
   const calculateDistance = async (address: string) => {
     setIsCalculatingDistance(true);
     try {
+      if (!window.google || !window.google.maps) {
+        throw new Error('Google Maps API not loaded');
+      }
+
       // Warehouse coordinates (Seegehalli)
       const warehouseAddress = 'Seegehalli, Bengaluru, Karnataka, India';
       
-      // Calculate distance using Google Distance Matrix API
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(address)}&destinations=${encodeURIComponent(warehouseAddress)}&units=metric&mode=driving&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY'}`
+      // Use Google Maps JavaScript API DistanceMatrixService
+      const service = new window.google.maps.DistanceMatrixService();
+      
+      service.getDistanceMatrix(
+        {
+          origins: [address],
+          destinations: [warehouseAddress],
+          travelMode: window.google.maps.TravelMode.DRIVING,
+          unitSystem: window.google.maps.UnitSystem.METRIC,
+          avoidHighways: false,
+          avoidTolls: false,
+        },
+        (response, status) => {
+          try {
+            if (status !== window.google.maps.DistanceMatrixStatus.OK) {
+              throw new Error(`Distance Matrix API error: ${status}`);
+            }
+
+            if (!response || !response.rows || response.rows.length === 0) {
+              throw new Error('No distance data found');
+            }
+
+            const element = response.rows[0].elements[0];
+
+            if (element.status !== window.google.maps.DistanceMatrixElementStatus.OK) {
+              throw new Error(`Distance calculation failed: ${element.status}`);
+            }
+
+            if (!element.distance || !element.distance.value) {
+              throw new Error('Distance value not found');
+            }
+
+            const distanceInMeters = element.distance.value;
+            const distanceInKm = Math.round(distanceInMeters / 1000);
+
+            setCalculatedDistance(distanceInKm);
+            updateFormData({ distanceKm: distanceInKm });
+
+            toast.success(`Distance calculated: ${distanceInKm} km from warehouse`);
+
+          } catch (error) {
+            console.error('Distance calculation error:', error);
+            toast.error('Could not calculate distance. Please verify the address.');
+            setCalculatedDistance(null);
+            updateFormData({ distanceKm: undefined });
+          } finally {
+            setIsCalculatingDistance(false);
+          }
+        }
       );
-      
-      if (!response.ok) {
-        throw new Error('Failed to calculate distance');
-      }
-      
-      const data = await response.json();
-      
-      if (data.status !== 'OK') {
-        throw new Error(`API Error: ${data.status}`);
-      }
-      
-      if (!data.rows || data.rows.length === 0 || !data.rows[0].elements || data.rows[0].elements.length === 0) {
-        throw new Error('No distance data found');
-      }
-      
-      const element = data.rows[0].elements[0];
-      
-      if (element.status !== 'OK') {
-        throw new Error(`Distance calculation failed: ${element.status}`);
-      }
-      
-      const distanceInMeters = element.distance.value;
-      const distanceInKm = Math.round(distanceInMeters / 1000);
-      
-      setCalculatedDistance(distanceInKm);
-      updateFormData({ distanceKm: distanceInKm });
-      
-      toast.success(`Distance calculated: ${distanceInKm} km from warehouse`);
       
     } catch (error) {
       console.error('Distance calculation error:', error);
       toast.error('Could not calculate distance. Please verify the address.');
       setCalculatedDistance(null);
       updateFormData({ distanceKm: undefined });
-    } finally {
       setIsCalculatingDistance(false);
     }
   };
