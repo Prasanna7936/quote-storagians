@@ -23,7 +23,7 @@ export interface BoxItems {
   booksPersonal: number; // Books, Documents, Personal Items, Gift Articles
 }
 
-export type DeliveryMethod = 'pickup' | 'third-party' | 'self-drop';
+export type DeliveryMethod = 'pickup' | 'third-party';
 
 
 export type DocumentBoxRequirement = 'need-fresh' | 'ready-to-ship';

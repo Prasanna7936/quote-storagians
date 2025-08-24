@@ -146,7 +146,7 @@ export const QuoteGenerator = () => {
   };
 
   const getStepTitle = (step: number) => {
-    const isDropMethod = formData.deliveryMethod === 'self-drop' || formData.deliveryMethod === 'third-party';
+    const isDropMethod = formData.deliveryMethod === 'third-party';
     
     if (isDocumentFlow) {
       switch (step) {
