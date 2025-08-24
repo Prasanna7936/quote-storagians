@@ -124,13 +124,15 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.line(30, yPos, 180, yPos);
       yPos += 10;
       
-      // Total Pickup Charges (highlighted)
+      // Total Pickup/Drop-off Charges (highlighted)
       pdf.setFont(undefined, 'bold');
       pdf.setFontSize(13);
-      pdf.text('Pickup Charges:', 30, yPos);
+      const chargeLabel = formData.deliveryMethod === 'third-party' ? 'Drop-off Charges:' : 'Pickup Charges:';
+      const chargeAmount = formData.deliveryMethod === 'third-party' ? '700' : quote.pickupCharges?.toLocaleString();
+      pdf.text(chargeLabel, 30, yPos);
       pdf.setTextColor(primaryGlowColor[0], primaryGlowColor[1], primaryGlowColor[2]);
       pdf.setFontSize(16);
-      pdf.text(`₹${quote.pickupCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
+      pdf.text(`₹${chargeAmount}`, 160, yPos, { align: 'right' });
       
     } else {
       // Document storage layout
@@ -232,7 +234,8 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(12);
     pdf.setFont(undefined, 'bold');
-    pdf.text('PICKUP DETAILS', 150, yPos + 7, { align: 'center' });
+    const detailsTitle = formData.deliveryMethod === 'third-party' ? 'DROP BY YOU' : 'PICKUP DETAILS';
+    pdf.text(detailsTitle, 150, yPos + 7, { align: 'center' });
     
     pdf.setFillColor(255, 255, 255);
     pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
@@ -344,11 +347,13 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
 
   const sendWhatsApp = () => {
     let message;
-    if (formData.storageType === 'household' && quote.pickupCharges) {
+    if (formData.storageType === 'household') {
+      const chargeType = formData.deliveryMethod === 'third-party' ? 'Drop-off Charges' : 'Pickup Charges';
+      const chargeAmount = formData.deliveryMethod === 'third-party' ? '700' : quote.pickupCharges?.toLocaleString();
       message = `Hi! I got a household storage quote:
 Total Volume: ${quote.totalVolume} cft
 Rental: ₹${quote.rentalCharges?.toLocaleString()} + GST
-Pickup Charges: ₹${quote.pickupCharges.toLocaleString()}
+${chargeType}: ₹${chargeAmount}
 Please contact me for booking.`;
     } else {
       message = `Hi! I got a storage quote of ₹${quote.totalCost.toLocaleString()} for ${quote.totalItems} items (${quote.estimatedVolume} cubic feet). Monthly rate: ₹${quote.monthlyRate.toLocaleString()}. Please contact me for booking.`;
@@ -442,16 +447,21 @@ Please contact me for booking.`;
                   
                   <Separator />
                   
-                  {/* Only Pickup Charges with note */}
+                  {/* Pickup or Drop-off Charges */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-lg">
-                      <span className="font-medium">Pickup Charges:</span>
+                      <span className="font-medium">
+                        {formData.deliveryMethod === 'third-party' ? 'Drop-Off Charges:' : 'Pickup Charges:'}
+                      </span>
                       <span className="text-2xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
-                        ₹{quote.pickupCharges?.toLocaleString()}
+                        ₹{formData.deliveryMethod === 'third-party' ? '700' : quote.pickupCharges?.toLocaleString()}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      (Includes Packing Material, Transportation and Labour Charges)
+                      {formData.deliveryMethod === 'third-party' 
+                        ? '(Handling and Inventory Charges)' 
+                        : '(Includes Packing Material, Transportation and Labour Charges)'
+                      }
                     </p>
                   </div>
                 </div>
@@ -540,7 +550,7 @@ Please contact me for booking.`;
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="w-5 h-5" />
-                  Pickup Details
+                  {formData.deliveryMethod === 'third-party' ? 'Drop by You' : 'Pickup Details'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">

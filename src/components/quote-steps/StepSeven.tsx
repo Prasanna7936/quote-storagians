@@ -89,7 +89,7 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
                     rel="noopener noreferrer"
                     className="text-primary hover:underline text-sm break-all"
                   >
-                    https://share.google/b0pCBCcBg0UkZWn4c
+                    https://maps.app.goo.gl/W5BtPuSuucQSVFPJ6
                   </a>
                 </div>
               </div>
