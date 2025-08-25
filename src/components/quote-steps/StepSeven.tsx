@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { MapPin, Calendar as CalendarIcon, Truck, Package2, Navigation } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MapPin, Calendar as CalendarIcon, Truck, Package2, Navigation, ChevronDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useState, useEffect, useRef } from 'react';
@@ -25,6 +26,9 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
   const [pincodeError, setPincodeError] = useState<string>('');
   const autocompleteRef = useRef<HTMLInputElement>(null);
   const [autocompleteService, setAutocompleteService] = useState<any>(null);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
 
   // Extract pincode from address
   const extractPincodeFromAddress = (address: string): string | null => {
@@ -66,7 +70,7 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
       }
 
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY'}&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY'}&libraries=places,geocoding`;
       script.async = true;
       script.defer = true;
       script.onload = () => loadGoogleMaps();
@@ -87,17 +91,111 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
     return true;
   };
 
-  // Handle pincode input with auto distance calculation
+  // Fetch location suggestions from pincode using Google Geocoding API
+  const fetchLocationFromPincode = async (pincode: string) => {
+    if (!validatePincode(pincode)) return;
+    
+    setIsFetchingLocation(true);
+    setLocationSuggestions([]);
+    setShowLocationDropdown(false);
+    
+    try {
+      if (!window.google || !window.google.maps) {
+        throw new Error('Google Maps API not loaded');
+      }
+
+      const geocoder = new (window.google.maps as any).Geocoder();
+      
+      geocoder.geocode(
+        { 
+          address: `${pincode}, Karnataka, India`,
+          componentRestrictions: { country: 'IN' }
+        },
+        (results: any, status: any) => {
+          try {
+            if (status !== 'OK') {
+              throw new Error('Invalid pincode or location not found');
+            }
+
+            if (!results || results.length === 0) {
+              throw new Error('No locations found for this pincode');
+            }
+
+            // Extract unique area names from results
+            const locations = results
+              .map((result: any) => {
+                // Get locality/sublocality from address components
+                const components = result.address_components;
+                const locality = components.find((comp: any) => 
+                  comp.types.includes('locality') || 
+                  comp.types.includes('sublocality_level_1') ||
+                  comp.types.includes('sublocality')
+                );
+                
+                return locality ? locality.long_name : result.formatted_address;
+              })
+              .filter((location: string, index: number, arr: string[]) => arr.indexOf(location) === index) // Remove duplicates
+              .slice(0, 5); // Limit to top 5 suggestions
+
+            if (locations.length === 1) {
+              // Auto-fill if only one location found
+              updateFormData({ pickupLocation: `${locations[0]}, ${pincode}` });
+              toast.success('Location auto-filled from pincode');
+              
+              // Auto-calculate distance
+              calculateDistance(`${locations[0]}, ${pincode}`, pincode);
+            } else if (locations.length > 1) {
+              // Show dropdown for multiple locations
+              setLocationSuggestions(locations);
+              setShowLocationDropdown(true);
+              toast.info('Multiple areas found. Please select your location.');
+            }
+
+          } catch (error) {
+            console.error('Geocoding error:', error);
+            setPincodeError('Invalid pincode or location not found');
+            updateFormData({ pickupLocation: '' });
+          } finally {
+            setIsFetchingLocation(false);
+          }
+        }
+      );
+      
+    } catch (error) {
+      console.error('Location fetch error:', error);
+      setPincodeError('Unable to fetch location. Please enter manually.');
+      setIsFetchingLocation(false);
+    }
+  };
+
+  // Handle location selection from dropdown
+  const handleLocationSelection = (selectedLocation: string) => {
+    const fullLocation = `${selectedLocation}, ${formData.areaPincode}`;
+    updateFormData({ pickupLocation: fullLocation });
+    setShowLocationDropdown(false);
+    setLocationSuggestions([]);
+    
+    toast.success('Location selected');
+    
+    // Auto-calculate distance with selected location
+    calculateDistance(fullLocation, formData.areaPincode);
+  };
+
+  // Handle pincode input with auto location fetching
   const handlePincodeChange = (pincode: string) => {
     updateFormData({ areaPincode: pincode });
+    setShowLocationDropdown(false);
+    setLocationSuggestions([]);
+    
     if (pincode.length === 6) {
       const isValid = validatePincode(pincode);
-      if (isValid && (!formData.pickupLocation || formData.pickupLocation.trim().length <= 10)) {
-        // Auto-calculate distance using pincode if no proper Google location
-        calculateDistance(undefined, pincode);
+      if (isValid) {
+        // Fetch location suggestions from pincode
+        fetchLocationFromPincode(pincode);
       }
     } else if (pincode.length > 0) {
       setPincodeError('');
+      updateFormData({ pickupLocation: '' }); // Clear location when pincode changes
     }
   };
 
@@ -307,6 +405,35 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
                   className="text-base"
                 />
               </div>
+
+              {/* Location fetching status */}
+              {isFetchingLocation && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg">
+                  <Navigation className="w-4 h-4 animate-spin" />
+                  Fetching location suggestions...
+                </div>
+              )}
+
+              {/* Location suggestions dropdown */}
+              {showLocationDropdown && locationSuggestions.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Select your area:
+                  </Label>
+                  <Select onValueChange={handleLocationSelection}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Choose your location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {locationSuggestions.map((location, index) => (
+                        <SelectItem key={index} value={location}>
+                          {location}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               {/* Distance calculation status and result */}
               {isCalculatingDistance && (
