@@ -90,7 +90,21 @@ const DOCUMENT_RATE_MATRIX = {
   }
 };
 
-const FRESH_BOX_CHARGE = 100;
+// Slab-based fresh box charges based on box count range
+const getBoxChargeRate = (boxCountRange: string): number => {
+  switch (boxCountRange) {
+    case '10-25':
+      return 100;
+    case '26-50':
+      return 90;
+    case '51-100':
+      return 85;
+    case '100+':
+      return 75;
+    default:
+      return 100;
+  }
+};
 
 export const calculateQuote = (formData: QuoteFormData): QuoteResult => {
   // Log calculation inputs for debugging
@@ -338,7 +352,8 @@ const calculateDocumentQuote = (formData: QuoteFormData): QuoteResult => {
   
   // Calculate costs
   const boxRental = boxRate * boxCount;
-  const boxCharges = formData.documentBoxRequirement === 'need-fresh' ? FRESH_BOX_CHARGE * boxCount : 0;
+  const boxChargeRate = getBoxChargeRate(boxCountRange);
+  const boxCharges = formData.documentBoxRequirement === 'need-fresh' ? boxChargeRate * boxCount : 0;
   const totalStorageCost = boxRental + boxCharges;
   
   // Format display values
@@ -366,6 +381,7 @@ const calculateDocumentQuote = (formData: QuoteFormData): QuoteResult => {
     boxCount,
     boxRate,
     boxRental,
-    boxCharges
+    boxCharges,
+    boxChargeRate
   };
 };

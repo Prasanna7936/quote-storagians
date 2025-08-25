@@ -169,7 +169,7 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.text('One-Time New Box Charge:', 30, yPos);
       pdf.setFont(undefined, 'bold');
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`₹${quote.boxCharges?.toLocaleString()} per box`, 160, yPos, { align: 'right' });
+      pdf.text(`₹${quote.boxChargeRate} per box`, 160, yPos, { align: 'right' });
     }
     
     yPos += 25;
@@ -474,9 +474,18 @@ Please contact me for booking.`;
                   <div className="flex justify-between items-center">
                     <span className="font-medium">One-Time New Box Charge:</span>
                     <span className="text-lg font-bold text-primary">
-                      ₹{quote.boxCharges?.toLocaleString()} per box
+                      ₹{quote.boxChargeRate} per box
                     </span>
                   </div>
+                  
+                  {/* Delivery Method Message */}
+                  {formData.deliveryMethod && (
+                    <div className="bg-success/10 border border-success/20 rounded-lg p-4 mt-4">
+                      <p className="text-success font-bold text-center">
+                        Thank you! Our team will be reaching out soon with pickup details and assistance.
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 

@@ -77,4 +77,5 @@ export interface QuoteResult {
   boxRate?: number;
   boxRental?: number;
   boxCharges?: number;
+  boxChargeRate?: number;
 }
