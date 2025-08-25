@@ -38,6 +38,7 @@ export interface QuoteFormData {
   boxes: BoxItems;
   deliveryMethod: DeliveryMethod;
   pickupLocation: string;
+  areaPincode: string;
   pickupDate: Date | null;
   customerName: string;
   customerPhone: string;

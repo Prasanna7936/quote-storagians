@@ -33,6 +33,7 @@ const initialFormData: QuoteFormData = {
   boxes: { luggage: 0, kitchen: 0, clothes: 0, booksPersonal: 0 },
   deliveryMethod: 'pickup',
   pickupLocation: '',
+  areaPincode: '',
   pickupDate: null,
   customerName: '',
   customerPhone: '',

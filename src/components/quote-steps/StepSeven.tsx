@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { MapPin, Calendar as CalendarIcon, Truck, Package2, Navigation } from 'lucide-react';
+import { MapPin, Calendar as CalendarIcon, Truck, Package2, Navigation, Calculator } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useState, useEffect, useRef } from 'react';
@@ -22,6 +22,7 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
   const isDropMethod = isThirdPartyDrop;
   const [isCalculatingDistance, setIsCalculatingDistance] = useState(false);
   const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null);
+  const [pincodeError, setPincodeError] = useState<string>('');
   const autocompleteRef = useRef<HTMLInputElement>(null);
   const [autocompleteService, setAutocompleteService] = useState<any>(null);
 
@@ -42,7 +43,6 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
             const place = autocomplete.getPlace();
             if (place.formatted_address) {
               updateFormData({ pickupLocation: place.formatted_address });
-              calculateDistance(place.formatted_address);
             }
           });
         }
@@ -60,21 +60,44 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
     loadGoogleMaps();
   }, []);
 
-  // Calculate distance when pickup location changes manually
-  useEffect(() => {
-    if (formData.pickupLocation && formData.deliveryMethod === 'pickup' && formData.pickupLocation.trim().length > 10) {
-      const timeoutId = setTimeout(() => {
-        calculateDistance(formData.pickupLocation);
-      }, 1000);
-      return () => clearTimeout(timeoutId);
+  // Validate pincode
+  const validatePincode = (pincode: string): boolean => {
+    const pincodeRegex = /^\d{6}$/;
+    if (!pincodeRegex.test(pincode)) {
+      setPincodeError('Please enter a valid 6-digit pincode');
+      return false;
     }
-  }, [formData.pickupLocation, formData.deliveryMethod]);
+    setPincodeError('');
+    return true;
+  };
 
-  const calculateDistance = async (address: string) => {
+  // Handle pincode input
+  const handlePincodeChange = (pincode: string) => {
+    updateFormData({ areaPincode: pincode });
+    if (pincode.length === 6) {
+      validatePincode(pincode);
+    } else if (pincode.length > 0) {
+      setPincodeError('');
+    }
+  };
+
+  const calculateDistance = async (address?: string, pincode?: string) => {
     setIsCalculatingDistance(true);
     try {
       if (!window.google || !window.google.maps) {
         throw new Error('Google Maps API not loaded');
+      }
+
+      // Determine the origin address
+      let originAddress = '';
+      if (address && address.trim().length > 10) {
+        // Use Google Maps address if properly entered
+        originAddress = address;
+      } else if (pincode && validatePincode(pincode)) {
+        // Fallback to pincode
+        originAddress = `${pincode}, Karnataka, India`;
+      } else {
+        throw new Error('Please provide either a complete address or valid pincode');
       }
 
       // Warehouse coordinates (Seegehalli)
@@ -85,7 +108,7 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
       
       service.getDistanceMatrix(
         {
-          origins: [address],
+          origins: [originAddress],
           destinations: [warehouseAddress],
           travelMode: window.google.maps.TravelMode.DRIVING,
           unitSystem: window.google.maps.UnitSystem.METRIC,
@@ -118,11 +141,12 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
             setCalculatedDistance(distanceInKm);
             updateFormData({ distanceKm: distanceInKm });
 
-            toast.success(`Distance calculated: ${distanceInKm} km from warehouse`);
+            const locationSource = address && address.trim().length > 10 ? 'address' : 'pincode';
+            toast.success(`Distance calculated: ${distanceInKm} km from warehouse (using ${locationSource})`);
 
           } catch (error) {
             console.error('Distance calculation error:', error);
-            toast.error('Could not calculate distance. Please verify the address.');
+            toast.error('Could not calculate distance. Please verify the location details.');
             setCalculatedDistance(null);
             updateFormData({ distanceKm: undefined });
           } finally {
@@ -133,11 +157,17 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
       
     } catch (error) {
       console.error('Distance calculation error:', error);
-      toast.error('Could not calculate distance. Please verify the address.');
+      toast.error(error instanceof Error ? error.message : 'Could not calculate distance.');
       setCalculatedDistance(null);
       updateFormData({ distanceKm: undefined });
       setIsCalculatingDistance(false);
     }
+  };
+
+  // Handle manual distance calculation
+  const handleCalculateDistance = () => {
+    if (formData.deliveryMethod !== 'pickup') return;
+    calculateDistance(formData.pickupLocation, formData.areaPincode);
   };
 
   return (
@@ -188,8 +218,8 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Location */}
-        <div className="space-y-2">
-          <Label htmlFor="location" className="flex items-center gap-2">
+        <div className="space-y-4">
+          <Label className="flex items-center gap-2">
             <MapPin className="w-4 h-4" />
             {isDropMethod ? 'Drop Location' : 'Pickup Location'}
           </Label>
@@ -216,25 +246,67 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
               </div>
             </div>
           ) : (
-            <div className="space-y-2">
-              <Input
-                ref={autocompleteRef}
-                id="location"
-                type="text"
-                placeholder="Enter your complete address"
-                value={formData.pickupLocation}
-                onChange={(e) => updateFormData({ pickupLocation: e.target.value })}
-                className="text-base"
-                required
-              />
-              {isCalculatingDistance && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Navigation className="w-4 h-4 animate-spin" />
-                  Calculating distance...
-                </div>
-              )}
+            <div className="space-y-3">
+              {/* Area Pincode - Mandatory */}
+              <div className="space-y-2">
+                <Label htmlFor="pincode" className="text-sm font-medium">
+                  Area Pincode <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="pincode"
+                  type="text"
+                  placeholder="Enter 6-digit pincode"
+                  value={formData.areaPincode}
+                  onChange={(e) => handlePincodeChange(e.target.value)}
+                  className="text-base"
+                  maxLength={6}
+                  required
+                />
+                {pincodeError && (
+                  <p className="text-sm text-destructive">{pincodeError}</p>
+                )}
+              </div>
+
+              {/* Google Maps Address - Optional */}
+              <div className="space-y-2">
+                <Label htmlFor="location" className="text-sm font-medium">
+                  Complete Address <span className="text-muted-foreground">(Optional - for better accuracy)</span>
+                </Label>
+                <Input
+                  ref={autocompleteRef}
+                  id="location"
+                  type="text"
+                  placeholder="Enter your complete address (optional)"
+                  value={formData.pickupLocation}
+                  onChange={(e) => updateFormData({ pickupLocation: e.target.value })}
+                  className="text-base"
+                />
+              </div>
+
+              {/* Calculate Distance Button */}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCalculateDistance}
+                disabled={isCalculatingDistance || (!formData.areaPincode && !formData.pickupLocation)}
+                className="w-full"
+              >
+                {isCalculatingDistance ? (
+                  <>
+                    <Navigation className="mr-2 h-4 w-4 animate-spin" />
+                    Calculating Distance...
+                  </>
+                ) : (
+                  <>
+                    <Calculator className="mr-2 h-4 w-4" />
+                    Calculate Distance for Pickup Charges
+                  </>
+                )}
+              </Button>
+
+              {/* Distance Result */}
               {calculatedDistance !== null && (
-                <div className="flex items-center gap-2 text-sm text-primary">
+                <div className="flex items-center gap-2 text-sm text-primary bg-primary/5 p-3 rounded-lg">
                   <Navigation className="w-4 h-4" />
                   Distance to warehouse: {calculatedDistance} km
                 </div>
