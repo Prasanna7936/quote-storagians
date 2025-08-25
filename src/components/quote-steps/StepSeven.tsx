@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { MapPin, Calendar as CalendarIcon, Truck, Package2, Navigation, Calculator } from 'lucide-react';
+import { MapPin, Calendar as CalendarIcon, Truck, Package2, Navigation } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useState, useEffect, useRef } from 'react';
@@ -26,6 +26,12 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
   const autocompleteRef = useRef<HTMLInputElement>(null);
   const [autocompleteService, setAutocompleteService] = useState<any>(null);
 
+  // Extract pincode from address
+  const extractPincodeFromAddress = (address: string): string | null => {
+    const pincodeMatch = address.match(/\b\d{6}\b/);
+    return pincodeMatch ? pincodeMatch[0] : null;
+  };
+
   // Initialize Google Places
   useEffect(() => {
     const loadGoogleMaps = () => {
@@ -35,14 +41,24 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
         if (autocompleteRef.current) {
           const autocomplete = new window.google.maps.places.Autocomplete(autocompleteRef.current, {
             componentRestrictions: { country: 'in' },
-            fields: ['formatted_address', 'geometry'],
+            fields: ['formatted_address', 'geometry', 'address_components'],
             types: ['address']
           });
 
           autocomplete.addListener('place_changed', () => {
             const place = autocomplete.getPlace();
-            if (place.formatted_address) {
+            if (place.formatted_address && place.geometry) {
               updateFormData({ pickupLocation: place.formatted_address });
+              
+              // Auto-fill pincode from Google place
+              const extractedPincode = extractPincodeFromAddress(place.formatted_address);
+              if (extractedPincode && !formData.areaPincode) {
+                updateFormData({ areaPincode: extractedPincode });
+                setPincodeError('');
+              }
+              
+              // Auto-calculate distance with confirmed Google location
+              calculateDistance(place.formatted_address, extractedPincode || formData.areaPincode);
             }
           });
         }
@@ -71,15 +87,30 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
     return true;
   };
 
-  // Handle pincode input
+  // Handle pincode input with auto distance calculation
   const handlePincodeChange = (pincode: string) => {
     updateFormData({ areaPincode: pincode });
     if (pincode.length === 6) {
-      validatePincode(pincode);
+      const isValid = validatePincode(pincode);
+      if (isValid && (!formData.pickupLocation || formData.pickupLocation.trim().length <= 10)) {
+        // Auto-calculate distance using pincode if no proper Google location
+        calculateDistance(undefined, pincode);
+      }
     } else if (pincode.length > 0) {
       setPincodeError('');
     }
   };
+
+  // Auto calculate distance when pincode is valid (fallback when no Google location)
+  useEffect(() => {
+    if (formData.areaPincode && 
+        formData.areaPincode.length === 6 && 
+        validatePincode(formData.areaPincode) && 
+        (!formData.pickupLocation || formData.pickupLocation.trim().length <= 10) &&
+        formData.deliveryMethod === 'pickup') {
+      calculateDistance(undefined, formData.areaPincode);
+    }
+  }, [formData.areaPincode, formData.pickupLocation, formData.deliveryMethod]);
 
   const calculateDistance = async (address?: string, pincode?: string) => {
     setIsCalculatingDistance(true);
@@ -162,12 +193,6 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
       updateFormData({ distanceKm: undefined });
       setIsCalculatingDistance(false);
     }
-  };
-
-  // Handle manual distance calculation
-  const handleCalculateDistance = () => {
-    if (formData.deliveryMethod !== 'pickup') return;
-    calculateDistance(formData.pickupLocation, formData.areaPincode);
   };
 
   return (
@@ -283,26 +308,13 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
                 />
               </div>
 
-              {/* Calculate Distance Button */}
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleCalculateDistance}
-                disabled={isCalculatingDistance || (!formData.areaPincode && !formData.pickupLocation)}
-                className="w-full"
-              >
-                {isCalculatingDistance ? (
-                  <>
-                    <Navigation className="mr-2 h-4 w-4 animate-spin" />
-                    Calculating Distance...
-                  </>
-                ) : (
-                  <>
-                    <Calculator className="mr-2 h-4 w-4" />
-                    Calculate Distance for Pickup Charges
-                  </>
-                )}
-              </Button>
+              {/* Distance calculation status and result */}
+              {isCalculatingDistance && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg">
+                  <Navigation className="w-4 h-4 animate-spin" />
+                  Calculating distance automatically...
+                </div>
+              )}
 
               {/* Distance Result */}
               {calculatedDistance !== null && (
