@@ -197,11 +197,10 @@ export const QuoteGenerator = () => {
         {/* Header */}
         <div className="text-center mb-8">
           {currentStep === 1 && (
-            <img 
-              src="/lovable-uploads/storagians-logo-full.png" 
-              alt="Storagians Logo" 
-              className="h-16 mx-auto mb-6"
-            />
+            <div className="text-center mb-6">
+              <h1 className="text-4xl font-bold text-primary mb-2">STORAGIANS</h1>
+              <p className="text-sm text-muted-foreground">Pack. Store. Return</p>
+            </div>
           )}
           {currentStep === 1 && (
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
