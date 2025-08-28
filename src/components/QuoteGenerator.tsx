@@ -194,13 +194,22 @@ export const QuoteGenerator = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+        {/* Header with Logo */}
         <div className="text-center mb-8">
           <img 
-            src="/lovable-uploads/storagians-logo-final.png" 
+            src="/lovable-uploads/storagians-logo-full.png" 
             alt="Storagians Logo" 
-            className="h-16 mx-auto mb-6"
+            className="h-20 mx-auto mb-6 object-contain"
+            onError={(e) => {
+              console.error('Logo failed to load');
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.nextElementSibling?.setAttribute('style', 'display: block;');
+            }}
           />
+          <div className="hidden">
+            <h1 className="text-3xl font-bold text-primary mb-2">STORAGIANS</h1>
+            <p className="text-sm text-muted-foreground">Pack. Store. Return</p>
+          </div>
           {currentStep === 1 && (
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Get an instant quote for your storage needs
