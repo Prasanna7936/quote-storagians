@@ -13,7 +13,7 @@ export const DocumentStepThree = ({ formData, updateFormData }: DocumentStepThre
     {
       value: 'need-fresh' as DocumentBoxRequirement,
       label: 'Need Fresh Boxes',
-      description: 'Require new boxes (2x1.5x2 ft) to pack documents',
+      description: 'Require new boxes (1.5 x 1.5 x 2 ft) to pack documents',
       icon: Package,
     },
     {
