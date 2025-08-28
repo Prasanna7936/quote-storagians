@@ -85,6 +85,29 @@ export const QuoteGenerator = () => {
   };
 
   const generateQuote = async () => {
+    // Validate customer information if on final step
+    if (currentStep === maxSteps) {
+      const isValidName = formData.customerName && formData.customerName.trim().length > 0;
+      const isValidPhone = formData.customerPhone && /^\d{10}$/.test(formData.customerPhone);
+      const isValidEmail = formData.customerEmail && 
+                          formData.customerEmail.trim().length > 0 &&
+                          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customerEmail);
+
+      if (!isValidName || !isValidPhone || !isValidEmail) {
+        const errors = [];
+        if (!isValidName) errors.push("Full Name is required");
+        if (!isValidPhone) errors.push("Phone Number must be exactly 10 digits");
+        if (!isValidEmail) errors.push("Valid Email Address is required");
+
+        toast({
+          title: "Please complete all required fields",
+          description: errors.join(", "),
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     try {
       // Show loading toast
       toast({

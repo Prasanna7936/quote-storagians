@@ -34,6 +34,11 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
     }
   };
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const isFormValid = () => {
     return formData.customerName && 
            formData.customerName.trim().length > 0 &&
@@ -41,7 +46,18 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
            validatePhoneNumber(formData.customerPhone) &&
            formData.customerEmail && 
            formData.customerEmail.trim().length > 0 &&
-           formData.customerEmail.includes('@');
+           validateEmail(formData.customerEmail);
+  };
+
+  // Expose validation function for parent component
+  (StepEight as any).validateForm = (data: QuoteFormData) => {
+    return data.customerName && 
+           data.customerName.trim().length > 0 &&
+           data.customerPhone && 
+           /^\d{10}$/.test(data.customerPhone) &&
+           data.customerEmail && 
+           data.customerEmail.trim().length > 0 &&
+           /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.customerEmail);
   };
 
   return (
@@ -95,11 +111,11 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
                 placeholder="Enter your email address"
                 value={formData.customerEmail}
                 onChange={(e) => updateFormData({ customerEmail: e.target.value })}
-                className={cn("w-full", (!formData.customerEmail || !formData.customerEmail.includes('@')) && "border-destructive/50")}
+                className={cn("w-full", (!formData.customerEmail || !validateEmail(formData.customerEmail)) && "border-destructive/50")}
                 type="email"
                 required
               />
-              {formData.customerEmail && !formData.customerEmail.includes('@') && (
+              {formData.customerEmail && !validateEmail(formData.customerEmail) && (
                 <p className="text-sm text-destructive">Please enter a valid email address</p>
               )}
             </div>
