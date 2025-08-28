@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
+import googleMapsImage from '@/assets/google-maps-placeholder.jpg';
 
 interface StepSevenProps {
   formData: QuoteFormData;
@@ -297,12 +298,6 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
     <div className="space-y-6">
       <div className="text-center mb-8">
         <Truck className="w-12 h-12 mx-auto mb-4 text-primary" />
-        {isThirdPartyDrop && (
-          <div className="text-muted-foreground mb-4 space-y-2">
-            <p>• Make your own shifting arrangements</p>
-            <p>• Our team will assist with Packing (if needed) and take care of Inventory</p>
-          </div>
-        )}
         <p className="text-muted-foreground">
           {isDropMethod 
             ? "When and where will you drop off your items?"
@@ -328,17 +323,19 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
                 </div>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Google Location Link</Label>
-                <div className="p-3 rounded-md border bg-muted/30">
-                  <a 
-                    href="https://share.google/b0pCBCcBg0UkZWn4c" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline text-sm break-all"
-                  >
-                    https://maps.app.goo.gl/W5BtPuSuucQSVFPJ6
-                  </a>
-                </div>
+                <Label className="text-sm font-medium text-muted-foreground">View Location on Google Maps</Label>
+                <a 
+                  href="https://maps.app.goo.gl/W5BtPuSuucQSVFPJ6" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block mt-2"
+                >
+                  <img 
+                    src={googleMapsImage} 
+                    alt="View on Google Maps" 
+                    className="w-full h-32 object-cover rounded-md border hover:opacity-80 transition-opacity cursor-pointer"
+                  />
+                </a>
               </div>
             </div>
           ) : (
@@ -474,6 +471,8 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
               <p className="font-medium mb-1">{isDropMethod ? 'Drop Information:' : 'Pickup Information:'}</p>
               {isDropMethod ? (
                 <ul className="space-y-1 text-xs">
+                  <li>• Make your own shifting arrangements</li>
+                  <li>• Our team will assist with Packing (if needed) and take care of Inventory</li>
                   <li>• Drop-off is available during business hours (9 AM - 6 PM)</li>
                   <li>• Please bring a valid ID for verification</li>
                   <li>• Our team will assist you with unloading</li>

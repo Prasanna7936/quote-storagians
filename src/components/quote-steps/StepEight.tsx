@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { User, Phone, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface StepEightProps {
   formData: QuoteFormData;
@@ -33,6 +34,16 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
     }
   };
 
+  const isFormValid = () => {
+    return formData.customerName && 
+           formData.customerName.trim().length > 0 &&
+           formData.customerPhone && 
+           validatePhoneNumber(formData.customerPhone) &&
+           formData.customerEmail && 
+           formData.customerEmail.trim().length > 0 &&
+           formData.customerEmail.includes('@');
+  };
+
   return (
     <div className="space-y-6">{/* Form Section */}
 
@@ -49,7 +60,7 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
                 placeholder="Enter your full name"
                 value={formData.customerName}
                 onChange={(e) => updateFormData({ customerName: e.target.value })}
-                className="w-full"
+                className={cn("w-full", !formData.customerName && "border-destructive/50")}
                 required
               />
             </div>
@@ -64,11 +75,14 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
                 placeholder="Enter your 10-digit phone number"
                 value={formData.customerPhone}
                 onChange={handlePhoneChange}
-                className="w-full"
+                className={cn("w-full", (!formData.customerPhone || !validatePhoneNumber(formData.customerPhone)) && "border-destructive/50")}
                 type="tel"
                 maxLength={10}
                 required
               />
+              {formData.customerPhone && !validatePhoneNumber(formData.customerPhone) && (
+                <p className="text-sm text-destructive">Please enter exactly 10 digits</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -81,10 +95,13 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
                 placeholder="Enter your email address"
                 value={formData.customerEmail}
                 onChange={(e) => updateFormData({ customerEmail: e.target.value })}
-                className="w-full"
+                className={cn("w-full", (!formData.customerEmail || !formData.customerEmail.includes('@')) && "border-destructive/50")}
                 type="email"
                 required
               />
+              {formData.customerEmail && !formData.customerEmail.includes('@') && (
+                <p className="text-sm text-destructive">Please enter a valid email address</p>
+              )}
             </div>
           </CardContent>
         </Card>
