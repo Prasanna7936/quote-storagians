@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { User, Phone, Mail } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface StepEightProps {
   formData: QuoteFormData;
@@ -10,15 +11,30 @@ interface StepEightProps {
 }
 
 export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
+  const { toast } = useToast();
+
+  const validatePhoneNumber = (phone: string) => {
+    const phoneRegex = /^\d{10}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+    if (value.length <= 10) {
+      updateFormData({ customerPhone: value });
+    }
+    
+    if (value.length === 10 && !validatePhoneNumber(value)) {
+      toast({
+        title: "Invalid phone number",
+        description: "Please enter a valid 10-digit phone number.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <User className="w-12 h-12 mx-auto mb-4 text-primary" />
-        <h3 className="text-xl font-semibold mb-2">Almost Done!</h3>
-        <p className="text-muted-foreground">
-          Please provide your contact information to receive your instant quote
-        </p>
-      </div>
+    <div className="space-y-6">{/* Form Section */}
 
       <div className="max-w-2xl mx-auto">
         <Card className="shadow-soft">
@@ -45,16 +61,14 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
               </Label>
               <Input
                 id="customer-phone"
-                placeholder="Enter your phone number"
+                placeholder="Enter your 10-digit phone number"
                 value={formData.customerPhone}
-                onChange={(e) => updateFormData({ customerPhone: e.target.value })}
+                onChange={handlePhoneChange}
                 className="w-full"
                 type="tel"
+                maxLength={10}
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                We'll send your quote via WhatsApp to this number
-              </p>
             </div>
 
             <div className="space-y-2">
@@ -71,9 +85,6 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
                 type="email"
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                Your detailed quote will be emailed to this address
-              </p>
             </div>
           </CardContent>
         </Card>

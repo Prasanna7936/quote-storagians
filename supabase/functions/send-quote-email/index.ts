@@ -183,6 +183,12 @@ function generateCompanyQuoteEmail(formData: any, quote: any): string {
             (Includes Packing Material, Transportation and Labour Charges)
           </p>
           
+          <h3 style="color: #333; margin-top: 20px;">Pickup Details</h3>
+          <p><strong>Storage Type:</strong> ${formData.storageType.charAt(0).toUpperCase() + formData.storageType.slice(1)}</p>
+          <p><strong>Duration:</strong> ${formData.duration}</p>
+          <p><strong>Pickup Location:</strong> ${formData.pickupLocation}</p>
+          <p><strong>Delivery Method:</strong> ${formData.deliveryMethod === 'pickup' ? 'Pickup by Us' : 'Drop by You'}</p>
+          
           <h3 style="color: #333; margin-top: 20px;">Items Breakdown</h3>
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
             <div>
@@ -257,6 +263,53 @@ function generateCustomerQuoteEmail(formData: any, quote: any): string {
             <p style="color: #666; font-size: 14px; margin-top: 10px;">
               (Includes Packing Material, Transportation and Labour Charges)
             </p>
+          </div>
+          
+          <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #e0e0e0;">
+            <h3 style="color: #FF8C38; margin-top: 0;">Pickup Details</h3>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span>Storage Type:</span>
+              <strong>${formData.storageType.charAt(0).toUpperCase() + formData.storageType.slice(1)}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span>Duration:</span>
+              <strong>${formData.duration}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span>Pickup Location:</span>
+              <strong>${formData.pickupLocation}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span>Delivery Method:</span>
+              <strong>${formData.deliveryMethod === 'pickup' ? 'Pickup by Us' : 'Drop by You'}</strong>
+            </div>
+          </div>
+          
+          <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #e0e0e0;">
+            <h3 style="color: #FF8C38; margin-top: 0;">Items Breakdown</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px;">
+              <div>
+                <h4 style="color: #333; margin-bottom: 5px;">Furniture:</h4>
+                <p style="margin: 2px 0; font-size: 14px;">Extra Large: ${formData.furniture?.extraLarge || 0}</p>
+                <p style="margin: 2px 0; font-size: 14px;">Large: ${formData.furniture?.large || 0}</p>
+                <p style="margin: 2px 0; font-size: 14px;">Medium: ${formData.furniture?.medium || 0}</p>
+                <p style="margin: 2px 0; font-size: 14px;">Small: ${formData.furniture?.small || 0}</p>
+              </div>
+              <div>
+                <h4 style="color: #333; margin-bottom: 5px;">Appliances:</h4>
+                <p style="margin: 2px 0; font-size: 14px;">Extra Large: ${formData.appliances?.extraLarge || 0}</p>
+                <p style="margin: 2px 0; font-size: 14px;">Large: ${formData.appliances?.large || 0}</p>
+                <p style="margin: 2px 0; font-size: 14px;">Medium: ${formData.appliances?.medium || 0}</p>
+                <p style="margin: 2px 0; font-size: 14px;">Small: ${formData.appliances?.small || 0}</p>
+              </div>
+              <div>
+                <h4 style="color: #333; margin-bottom: 5px;">Boxes & Luggage:</h4>
+                <p style="margin: 2px 0; font-size: 14px;">Luggage: ${formData.boxes?.luggage || 0}</p>
+                <p style="margin: 2px 0; font-size: 14px;">Kitchen: ${formData.boxes?.kitchen || 0}</p>
+                <p style="margin: 2px 0; font-size: 14px;">Clothes: ${formData.boxes?.clothes || 0}</p>
+                <p style="margin: 2px 0; font-size: 14px;">Books/Personal: ${formData.boxes?.booksPersonal || 0}</p>
+              </div>
+            </div>
           </div>
         ` : `
           <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #e0e0e0;">

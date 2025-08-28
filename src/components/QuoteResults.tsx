@@ -387,6 +387,11 @@ Please contact me for booking.`;
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
+          <img 
+            src="/lovable-uploads/storagians-logo-transparent.png" 
+            alt="Storagians Logo" 
+            className="h-16 mx-auto mb-6"
+          />
           <div className="w-16 h-16 mx-auto mb-4 bg-gradient-primary rounded-full flex items-center justify-center">
             <Calculator className="w-8 h-8 text-primary-foreground" />
           </div>
@@ -584,14 +589,10 @@ Please contact me for booking.`;
 
         {/* Action Buttons */}
         <div className="max-w-4xl mx-auto mt-8">
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-3">
             <Button variant="gradient" onClick={downloadQuote} size="lg">
               <Download className="w-4 h-4 mr-2" />
               Download Quote
-            </Button>
-            <Button variant="success" onClick={sendWhatsApp} size="lg">
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Share on WhatsApp
             </Button>
             <Button variant="outline" size="lg" onClick={confirmBooking}>
               <Mail className="w-4 h-4 mr-2" />

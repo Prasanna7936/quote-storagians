@@ -25,8 +25,8 @@ export const StepSix = ({ formData, updateFormData }: StepSixProps) => {
     {
       value: 'third-party',
       label: 'Drop by You',
-      description: 'Bring goods yourself → our team will assist with packing',
-      details: 'Arrange drop-off via Porter/NoBroker → only packed items will be accepted',
+      description: 'Make your own shifting arrangements (own vehicle or 3rd party logistics)',
+      details: 'Our team will assist with packing (if needed) and take care of inventory',
       icon: Package
     }
   ];

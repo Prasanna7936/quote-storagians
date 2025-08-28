@@ -19,19 +19,19 @@ export const StepFive = ({ formData, updateFormData }: StepFiveProps) => {
     },
     {
       key: 'kitchen' as const,
-      title: 'Boxes for Kitchen Items',
+      title: 'Box (1.5x1.5x2ft) for Kitchen Items',
       description: 'Kitchen Utensils/Crockery',
       examples: ['Utensils', 'Crockery', 'Pots & Pans', 'Kitchen Appliances']
     },
     {
       key: 'clothes' as const,
-      title: 'Boxes Cloths and Bedding',
+      title: 'Box (1.5x1.5x2ft) Cloths and Bedding',
       description: 'Cloths, Pillows, Bedsheets',
       examples: ['Clothing', 'Pillows', 'Bedsheets', 'Blankets']
     },
     {
       key: 'booksPersonal' as const,
-      title: 'Boxes for Books/Documents and Personal Items',
+      title: 'Box (1.5x1.5x2ft) for Books/Documents and Personal Items',
       description: 'Books, Documents, Personal Items, Gift Articles',
       examples: ['Books', 'Documents', 'Papers', 'Gift Items', 'Shoes', 'Slippers', 'Toiletries', 'Personal Care']
     }

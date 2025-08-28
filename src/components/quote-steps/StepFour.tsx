@@ -14,26 +14,26 @@ export const StepFour = ({ formData, updateFormData }: StepFourProps) => {
     {
       key: 'extraLarge' as const,
       title: 'Extra Large Appliances',
-      description: 'Fridge 3+ Door, TV 80+ inch, Washing Machine 10+ ltrs',
-      examples: ['3+ Door Fridge', '80"+ TV', 'Large Washing Machine', 'Industrial Equipment']
+      description: 'Fridge 3+ Door / Side-by-Side Refrigerator, TV 65+ inch',
+      examples: ['3+ Door Fridge', 'Side-by-Side Refrigerator', '65"+ TV']
     },
     {
       key: 'large' as const,
       title: 'Large Appliances',
-      description: 'Fridge 2 Door, TV above 65+ inch, Washing Machine 5+ Ltrs',
-      examples: ['2-Door Fridge', '65"+ TV', 'Standard Washing Machine', 'Large AC']
+      description: 'Fridge 2 Door, TV 55+ inch, Washing Machine, Dishwasher, AC (Split unit)',
+      examples: ['2-Door Fridge', '55"+ TV', 'Washing Machine', 'Dishwasher', 'Split AC']
     },
     {
       key: 'medium' as const,
       title: 'Medium Appliances',
-      description: 'Fridge Single Door, TV up to 60 inch, AC',
-      examples: ['Single Door Fridge', 'Medium TV', 'Split AC', 'Dishwasher']
+      description: 'Fridge Single Door, TV 32+ inch, Cooler, AC Unit',
+      examples: ['Single Door Fridge', '32"+ TV', 'Cooler', 'AC Unit']
     },
     {
       key: 'small' as const,
       title: 'Small Appliances',
-      description: 'Mini Fridge, Gas Stove, Microwave Oven, Mixer/Grinder',
-      examples: ['Mini Fridge', 'Microwave', 'Gas Stove', 'Mixer/Grinder']
+      description: 'Gas Stove, Microwave Oven/OTG, Mixer/Grinder, Water Purifier, Vacuum Cleaner',
+      examples: ['Gas Stove', 'Microwave/OTG', 'Mixer/Grinder', 'Water Purifier', 'Vacuum Cleaner']
     }
   ];
 

@@ -13,25 +13,25 @@ export const StepThree = ({ formData, updateFormData }: StepThreeProps) => {
     {
       key: 'extraLarge' as const,
       title: 'Extra Large Furniture',
-      description: 'L Shape Sofa, Almirah/Cupboard 3Door, King Size cot, Dining Table 8 Seater',
+      description: 'L Shape Sofa, Almirah/Cupboard 3Door, King Size cot, Dining Table 8 Seater or similar items',
       examples: ['L Shape Sofa', 'King Size Bed', 'Large Dining Table', '3-Door Cupboard']
     },
     {
       key: 'large' as const,
       title: 'Large Furniture',
-      description: 'Sofa 3 Seater, Queen cot, Dining Table 6 Seater, Almirah/Cupboard 2 Door',
+      description: 'Sofa 3 Seater, Queen cot, Dining Table 6 Seater, Almirah/Cupboard 2 Door or similar items',
       examples: ['3 Seater Sofa', 'Queen Bed', '6-Seater Dining Table', '2-Door Wardrobe']
     },
     {
       key: 'medium' as const,
       title: 'Medium Furniture',
-      description: 'Sofa 1 & 2 Seater, Single cot, Dining Table 4 Seater, Study/Computer Table, Mattresses',
+      description: 'Sofa 1 & 2 Seater, Single cot, Dining Table 4 Seater, Study/Computer Table, Mattresses or similar items',
       examples: ['2 Seater Sofa', 'Single Bed', 'Study Table', 'Mattresses']
     },
     {
       key: 'small' as const,
       title: 'Small Furniture',
-      description: 'Foldable Cot, Dining Chair, Side/Centre Table, Office Chair, Plastic Chairs (4 stackable)',
+      description: 'Foldable Cot, Dining Chair, Side/Centre Table, Office Chair, Plastic Chairs (4 stackable) or similar items',
       examples: ['Dining Chairs', 'Coffee Table', 'Office Chair', 'Plastic Chairs']
     }
   ];

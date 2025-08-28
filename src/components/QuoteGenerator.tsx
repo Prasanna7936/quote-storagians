@@ -167,7 +167,7 @@ export const QuoteGenerator = () => {
         case 3: return 'Box Requirement';
         case 4: return 'Storage Type';
         case 5: return 'Number of Boxes';
-        case 6: return 'Delivery Method';
+        case 6: return 'Shifting Options';
         case 7: return isDropMethod ? 'Drop Details' : 'Pickup Details';
         case 8: return 'Your Information';
         default: return 'Step';
@@ -179,7 +179,7 @@ export const QuoteGenerator = () => {
         case 3: return 'Furniture';
         case 4: return 'Appliances';
         case 5: return 'Boxes & Luggage';
-        case 6: return 'Delivery Method';
+        case 6: return 'Shifting Options';
         case 7: return isDropMethod ? 'Drop Details' : 'Pickup Details';
         case 8: return 'Your Information';
         default: return 'Step';
@@ -196,20 +196,17 @@ export const QuoteGenerator = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <img 
-            src="/lovable-uploads/bd6d9619-fe1c-4b83-9289-e6fc65d935ba.png" 
-            alt="Storagians Logo" 
-            className="h-16 mx-auto mb-6"
-          />
           {currentStep === 1 && (
-            <>
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-4">
-                Get Quote
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Get an instant quote for your storage needs
-              </p>
-            </>
+            <img 
+              src="/lovable-uploads/storagians-logo-transparent.png" 
+              alt="Storagians Logo" 
+              className="h-16 mx-auto mb-6"
+            />
+          )}
+          {currentStep === 1 && (
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Get an instant quote for your storage needs
+            </p>
           )}
         </div>
 
