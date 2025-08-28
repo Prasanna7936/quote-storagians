@@ -196,11 +196,18 @@ export const QuoteGenerator = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header with Logo */}
         <div className="text-center mb-8">
-          <img 
-            src="/lovable-uploads/storagians-logo-transparent.png" 
-            alt="Storagians Logo" 
-            className="h-20 mx-auto mb-6 object-contain"
-          />
+          <a 
+            href="https://www.storagians.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block"
+          >
+            <img 
+              src="/lovable-uploads/9a403bd5-61d9-4343-a39e-4dea51cbec6b.png" 
+              alt="Storagians Logo" 
+              className="h-16 md:h-20 max-w-xs mx-auto mb-6 object-contain hover:opacity-80 transition-opacity"
+            />
+          </a>
           {currentStep === 1 && (
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Get an instant quote for your storage needs
