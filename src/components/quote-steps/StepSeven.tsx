@@ -299,27 +299,8 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
         <Truck className="w-12 h-12 mx-auto mb-4 text-primary" />
         {isThirdPartyDrop && (
           <div className="text-muted-foreground mb-4 space-y-2">
-            <p>• Bring goods yourself → our team will assist with packing</p>
-            <p>• Arrange drop-off via{' '}
-              <a 
-                href="https://porter.in/packers-and-movers/bangalore?gads=search&utm_source=google&utm_medium=cpc&utm_campaign=19009706290&utm_term=141080200702&utm_content=porter%20packers%20and%20movers&click_id=Cj0KCQjwkILEBhDeARIsAL--pjxZIev_J99mEIO-_Xc4DvRC87rUBsVACIdPEouv1FYYYBu94Tt6CyoaAsIgEALw_wcB&gad_source=1&gad_campaignid=19009706290&gbraid=0AAAAAoulZ9igs693PNtb9NMTNxHV4vUot&gclid=Cj0KCQjwkILEBhDeARIsAL--pjxZIev_J99mEIO-_Xc4DvRC87rUBsVACIdPEouv1FYYYBu94Tt6CyoaAsIgEALw_wcB"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline font-medium"
-              >
-                Porter
-              </a>
-              /{' '}
-              <a 
-                href="https://www.nobroker.in/packers-and-movers/bangalore"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline font-medium"
-              >
-                NoBroker
-              </a>
-              {' '}→ only packed items will be accepted
-            </p>
+            <p>• Make your own shifting arrangements</p>
+            <p>• Our team will assist with Packing (if needed) and take care of Inventory</p>
           </div>
         )}
         <p className="text-muted-foreground">
@@ -330,14 +311,6 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
         </p>
       </div>
 
-      {isDropMethod && (
-        <Alert className="border-primary/20 bg-primary/5">
-          <Package2 className="h-4 w-4" />
-          <AlertDescription>
-            Please ensure your items are securely packed and labeled before drop-off.
-          </AlertDescription>
-        </Alert>
-      )}
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Location */}
@@ -509,9 +482,8 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
               ) : (
                 <ul className="space-y-1 text-xs">
                   <li>• Our team will contact you to confirm the pickup time</li>
-                  <li>• Please ensure easy access to your items</li>
-                  <li>• We provide professional packing materials</li>
-                  <li>• Pickup is usually completed within 2-4 hours</li>
+                  <li>• Our team brings all packing materials and tools for safe handling</li>
+                  <li>• Pickup is usually completed within 3 to 5 hours, depending on the item list</li>
                 </ul>
               )}
             </div>

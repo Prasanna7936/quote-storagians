@@ -42,7 +42,7 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
             <div className="space-y-2">
               <Label htmlFor="customer-name" className="flex items-center gap-2">
                 <User className="w-4 h-4" />
-                Full Name *
+                Full Name <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="customer-name"
@@ -57,7 +57,7 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
             <div className="space-y-2">
               <Label htmlFor="customer-phone" className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
-                Phone Number *
+                Phone Number <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="customer-phone"
@@ -74,7 +74,7 @@ export const StepEight = ({ formData, updateFormData }: StepEightProps) => {
             <div className="space-y-2">
               <Label htmlFor="customer-email" className="flex items-center gap-2">
                 <Mail className="w-4 h-4" />
-                Email Address *
+                Email Address <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="customer-email"
