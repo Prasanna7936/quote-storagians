@@ -196,13 +196,11 @@ export const QuoteGenerator = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          {currentStep === 1 && (
-            <img 
-              src="/lovable-uploads/storagians-logo-final.png" 
-              alt="Storagians Logo" 
-              className="h-16 mx-auto mb-6"
-            />
-          )}
+          <img 
+            src="/lovable-uploads/storagians-logo-final.png" 
+            alt="Storagians Logo" 
+            className="h-16 mx-auto mb-6"
+          />
           {currentStep === 1 && (
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Get an instant quote for your storage needs
