@@ -34,7 +34,6 @@ export const DocumentStepFive = ({ formData, updateFormData }: DocumentStepFiveP
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-medium text-foreground mb-2">Number of Boxes</h3>
         <p className="text-muted-foreground">
           How many boxes do you need to store?
         </p>

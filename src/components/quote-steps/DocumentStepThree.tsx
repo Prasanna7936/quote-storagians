@@ -27,7 +27,6 @@ export const DocumentStepThree = ({ formData, updateFormData }: DocumentStepThre
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-medium text-foreground mb-2">Box Requirement</h3>
         <p className="text-muted-foreground">
           Do you need new boxes or are your documents already packed?
         </p>
