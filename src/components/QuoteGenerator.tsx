@@ -198,7 +198,7 @@ export const QuoteGenerator = () => {
         <div className="text-center mb-8">
           {currentStep === 1 && (
             <img 
-              src="/lovable-uploads/storagians-logo-complete.png" 
+              src="/lovable-uploads/storagians-logo-full.png" 
               alt="Storagians Logo" 
               className="h-16 mx-auto mb-6"
             />
