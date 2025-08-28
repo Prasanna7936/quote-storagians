@@ -388,7 +388,7 @@ Please contact me for booking.`;
         {/* Header */}
         <div className="text-center mb-8">
           <img 
-            src="/lovable-uploads/storagians-logo-full.png" 
+            src="/lovable-uploads/storagians-logo-complete.png" 
             alt="Storagians Logo" 
             className="h-16 mx-auto mb-6"
           />
