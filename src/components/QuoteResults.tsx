@@ -85,7 +85,7 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.text('Rental Charges:', 30, yPos);
       pdf.setFont(undefined, 'bold');
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`₹${quote.rentalCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
+      pdf.text(`Rs.${quote.rentalCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
       yPos += 8;
       
       // Packing Material
@@ -94,7 +94,7 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.text('Packing Material Charges:', 30, yPos);
       pdf.setFont(undefined, 'bold');
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`₹${quote.packingMaterialCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
+      pdf.text(`Rs.${quote.packingMaterialCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
       yPos += 8;
       
       // Total Volume
@@ -109,14 +109,14 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.setFont(undefined, 'normal');
       pdf.text('Recommended Vehicle:', 30, yPos);
       pdf.setFont(undefined, 'bold');
-      pdf.text(`${quote.recommendedVehicle} (₹${quote.vehicleCost?.toLocaleString()})`, 160, yPos, { align: 'right' });
+      pdf.text(`${quote.recommendedVehicle} (Rs.${quote.vehicleCost?.toLocaleString()})`, 160, yPos, { align: 'right' });
       yPos += 8;
       
       // Labour
       pdf.setFont(undefined, 'normal');
       pdf.text('Labour Required:', 30, yPos);
       pdf.setFont(undefined, 'bold');
-      pdf.text(`${quote.labourCount} (₹${quote.labourCost?.toLocaleString()})`, 160, yPos, { align: 'right' });
+      pdf.text(`${quote.labourCount} (Rs.${quote.labourCost?.toLocaleString()})`, 160, yPos, { align: 'right' });
       yPos += 10;
       
       // Separator line
@@ -132,7 +132,7 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.text(chargeLabel, 30, yPos);
       pdf.setTextColor(primaryGlowColor[0], primaryGlowColor[1], primaryGlowColor[2]);
       pdf.setFontSize(16);
-      pdf.text(`₹${chargeAmount}`, 160, yPos, { align: 'right' });
+      pdf.text(`Rs.${chargeAmount}`, 160, yPos, { align: 'right' });
       
     } else {
       // Document storage layout
@@ -161,7 +161,7 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.text('Monthly Storage Rental:', 30, yPos);
       pdf.setFont(undefined, 'bold');
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`₹${quote.boxRate} per box`, 160, yPos, { align: 'right' });
+      pdf.text(`Rs.${quote.boxRate} per box`, 160, yPos, { align: 'right' });
       yPos += 8;
       
       pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
@@ -169,7 +169,7 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.text('One-Time New Box Charge:', 30, yPos);
       pdf.setFont(undefined, 'bold');
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`₹${quote.boxChargeRate} per box`, 160, yPos, { align: 'right' });
+      pdf.text(`Rs.${quote.boxChargeRate} per box`, 160, yPos, { align: 'right' });
     }
     
     yPos += 25;
