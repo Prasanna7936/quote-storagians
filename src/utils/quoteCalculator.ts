@@ -2,20 +2,20 @@ import { QuoteFormData, QuoteResult } from '@/types/quote';
 
 // New household calculation rates
 const RENTAL_RATES = {
-  extraLarge: 348,
-  large: 222,
-  medium: 136,
-  small: 46,
-  luggage: 50,
-  boxes: 65
+  extraLarge: 420,
+  large: 260,
+  medium: 143,
+  small: 49,
+  luggage: 59,
+  boxes: 40
 };
 
 const PACKING_MATERIAL_RATES = {
-  extraLarge: 452,
-  large: 288,
+  extraLarge: 520,
+  large: 319,
   medium: 177,
-  small: 60,
-  luggage: 50,
+  small: 63,
+  luggage: 35,
   boxes: 85
 };
 
@@ -36,7 +36,16 @@ const VEHICLE_OPTIONS = [
   { minVolume: 1001, maxVolume: Infinity, name: 'Eicher Canter 19 ft (1200 CFT)', baseFare: 4500, ratePerKm: 50 }
 ];
 
-const LABOUR_COST_PER_PERSON = 800;
+const LABOUR_COST_PER_PERSON = 900;
+
+// Vehicle minimum labor requirements
+const VEHICLE_MIN_LABOURERS = {
+  'Tata Ace (250 CFT)': 2,
+  'Bolero Pickup (400 CFT)': 3,
+  'Eicher Canter 14 ft (800 CFT)': 4,
+  'Eicher Canter 17 ft (1000 CFT)': 5,
+  'Eicher Canter 19 ft (1200 CFT)': 6
+};
 
 // Old constants for backward compatibility with business/document storage
 const FURNITURE_RATES = {
@@ -242,27 +251,28 @@ const calculateHouseholdQuote = (formData: QuoteFormData): QuoteResult => {
   // 4. Vehicle Selection
   const vehicle = VEHICLE_OPTIONS.find(v => totalVolume >= v.minVolume && totalVolume <= v.maxVolume) || VEHICLE_OPTIONS[0];
   
-  // 5. Labour Estimation
-  let labourCount = 2; // Default
+  // 5. Labour Estimation - New logic
+  let labourCount = 2; // Base
   
-  // Base rules based on volume
-  if (totalVolume <= 900) {
-    labourCount = 2;
-  } else if (totalVolume >= 901 && totalVolume <= 1400) {
-    labourCount = 3;
-  } else if (totalVolume > 1400) {
-    labourCount = 4;
-  }
+  // If total_cft > 400 then additional = ceil((total_cft - 400) / 200) else additional = 0
+  const additional = totalVolume > 400 ? Math.ceil((totalVolume - 400) / 200) : 0;
+  labourCount = labourCount + additional;
   
-  // Override rules
+  // Vehicle minimum override
+  const vehicleMinLabour = VEHICLE_MIN_LABOURERS[vehicle.name] || 2;
+  labourCount = Math.max(labourCount, vehicleMinLabour);
+  
+  // XL item safeguard
   if (extraLarge >= 1 && labourCount < 3) {
     labourCount = 3;
   }
   
+  // High item-count safeguard
   const totalItems = extraLarge + large + medium + small + luggages + boxes;
   if (totalItems > 60 && labourCount < 4) {
     labourCount = labourCount + 1;
   }
+  
   const labourCost = labourCount * LABOUR_COST_PER_PERSON;
   
   // 6. Pickup Charges (distance-based calculation with new formula)
