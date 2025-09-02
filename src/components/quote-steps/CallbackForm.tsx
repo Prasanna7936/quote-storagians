@@ -35,6 +35,17 @@ export const CallbackForm = ({ onSubmit, onCancel }: CallbackFormProps) => {
       return;
     }
 
+    // Validate mobile number - exactly 10 digits
+    const mobileRegex = /^\d{10}$/;
+    if (!mobileRegex.test(formData.mobile.trim())) {
+      toast({
+        title: "Invalid mobile number",
+        description: "Mobile number must be exactly 10 digits.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
@@ -70,7 +81,13 @@ export const CallbackForm = ({ onSubmit, onCancel }: CallbackFormProps) => {
   };
 
   const updateField = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'mobile') {
+      // Only allow digits and limit to 10 characters
+      const numericValue = value.replace(/\D/g, '').slice(0, 10);
+      setFormData(prev => ({ ...prev, [field]: numericValue }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   return (
