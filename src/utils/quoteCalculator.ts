@@ -20,12 +20,12 @@ const PACKING_MATERIAL_RATES = {
 };
 
 const VOLUME_RATES = {
-  extraLarge: 165, // cft per item
-  large: 95,
-  medium: 45,
-  small: 20,
-  luggage: 18,
-  boxes: 28
+  extraLarge: 60, // cft per item
+  large: 30,
+  medium: 15,
+  small: 5,
+  luggage: 7,
+  boxes: 5
 };
 
 const VEHICLE_OPTIONS = [
