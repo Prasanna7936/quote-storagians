@@ -387,18 +387,18 @@ Please contact me for booking.`;
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <img 
-            src="/lovable-uploads/storagians-logo-complete.png" 
-            alt="Storagians Logo" 
-            className="h-16 mx-auto mb-6"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-              const fallback = document.createElement('div');
-              fallback.className = 'h-16 mx-auto mb-6 flex items-center justify-center bg-gradient-primary rounded-lg px-6';
-              fallback.innerHTML = '<span class="text-2xl font-bold text-primary-foreground">STORAGIANS</span>';
-              e.currentTarget.parentNode?.insertBefore(fallback, e.currentTarget);
-            }}
-          />
+          <a 
+            href="https://www.storagians.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block"
+          >
+            <img 
+              src="/lovable-uploads/eaecb7b7-1d69-4fc7-8fe1-6b775a4b45ef.png" 
+              alt="Storagians Logo" 
+              className="h-16 md:h-20 max-w-xs mx-auto mb-6 object-contain hover:opacity-80 transition-opacity"
+            />
+          </a>
           <div className="w-16 h-16 mx-auto mb-4 bg-gradient-primary rounded-full flex items-center justify-center">
             <Calculator className="w-8 h-8 text-primary-foreground" />
           </div>
