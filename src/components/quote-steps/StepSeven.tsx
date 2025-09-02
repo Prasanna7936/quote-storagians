@@ -141,7 +141,7 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
             if (locations.length === 1) {
               // Auto-fill if only one location found
               updateFormData({ pickupLocation: `${locations[0]}, ${pincode}` });
-              toast.success('Location auto-filled from pincode');
+              
               
               // Auto-calculate distance
               calculateDistance(`${locations[0]}, ${pincode}`, pincode);
@@ -175,8 +175,6 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
     updateFormData({ pickupLocation: fullLocation });
     setShowLocationDropdown(false);
     setLocationSuggestions([]);
-    
-    toast.success('Location selected');
     
     // Auto-calculate distance with selected location
     calculateDistance(fullLocation, formData.areaPincode);
@@ -271,8 +269,7 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
             setCalculatedDistance(distanceInKm);
             updateFormData({ distanceKm: distanceInKm });
 
-            const locationSource = address && address.trim().length > 10 ? 'address' : 'pincode';
-            toast.success(`Distance calculated: ${distanceInKm} km from warehouse (using ${locationSource})`);
+            // Distance calculated silently without notification
 
           } catch (error) {
             console.error('Distance calculation error:', error);
@@ -405,21 +402,6 @@ export const StepSeven = ({ formData, updateFormData }: StepSevenProps) => {
                 </div>
               )}
 
-              {/* Distance calculation status and result */}
-              {isCalculatingDistance && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg">
-                  <Navigation className="w-4 h-4 animate-spin" />
-                  Calculating distance automatically...
-                </div>
-              )}
-
-              {/* Distance Result */}
-              {calculatedDistance !== null && (
-                <div className="flex items-center gap-2 text-sm text-primary bg-primary/5 p-3 rounded-lg">
-                  <Navigation className="w-4 h-4" />
-                  Distance to warehouse: {calculatedDistance} km
-                </div>
-              )}
             </div>
           )}
         </div>
