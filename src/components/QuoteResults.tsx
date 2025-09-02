@@ -388,9 +388,16 @@ Please contact me for booking.`;
         {/* Header */}
         <div className="text-center mb-8">
           <img 
-            src="/lovable-uploads/storagians-logo-full.png" 
+            src="/lovable-uploads/storagians-logo-complete.png" 
             alt="Storagians Logo" 
             className="h-16 mx-auto mb-6"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              const fallback = document.createElement('div');
+              fallback.className = 'h-16 mx-auto mb-6 flex items-center justify-center bg-gradient-primary rounded-lg px-6';
+              fallback.innerHTML = '<span class="text-2xl font-bold text-primary-foreground">STORAGIANS</span>';
+              e.currentTarget.parentNode?.insertBefore(fallback, e.currentTarget);
+            }}
           />
           <div className="w-16 h-16 mx-auto mb-4 bg-gradient-primary rounded-full flex items-center justify-center">
             <Calculator className="w-8 h-8 text-primary-foreground" />
