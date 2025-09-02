@@ -29,10 +29,11 @@ const VOLUME_RATES = {
 };
 
 const VEHICLE_OPTIONS = [
-  { minVolume: 0, maxVolume: 500, name: 'Tata Ace', ratePerKm: 30, minimum: 350 },
-  { minVolume: 501, maxVolume: 900, name: 'Bolero Pickup', ratePerKm: 35, minimum: 500 },
-  { minVolume: 901, maxVolume: 1400, name: 'Eicher 14ft', ratePerKm: 45, minimum: 900 },
-  { minVolume: 1401, maxVolume: Infinity, name: 'Eicher 17ft', ratePerKm: 55, minimum: 1200 }
+  { minVolume: 0, maxVolume: 250, name: 'Tata Ace (250 CFT)', baseFare: 400, ratePerKm: 30 },
+  { minVolume: 251, maxVolume: 400, name: 'Bolero Pickup (400 CFT)', baseFare: 550, ratePerKm: 35 },
+  { minVolume: 401, maxVolume: 800, name: 'Eicher Canter 14 ft (800 CFT)', baseFare: 1250, ratePerKm: 40 },
+  { minVolume: 801, maxVolume: 1000, name: 'Eicher Canter 17 ft (1000 CFT)', baseFare: 3200, ratePerKm: 45 },
+  { minVolume: 1001, maxVolume: Infinity, name: 'Eicher Canter 19 ft (1200 CFT)', baseFare: 4500, ratePerKm: 50 }
 ];
 
 const LABOUR_COST_PER_PERSON = 800;
@@ -264,9 +265,10 @@ const calculateHouseholdQuote = (formData: QuoteFormData): QuoteResult => {
   }
   const labourCost = labourCount * LABOUR_COST_PER_PERSON;
   
-  // 6. Pickup Charges (distance-based calculation)
+  // 6. Pickup Charges (distance-based calculation with new formula)
   const distance = formData.distanceKm || 0;
-  const vehicleCost = Math.max(vehicle.minimum, distance * vehicle.ratePerKm);
+  const billedDistance = Math.max(0, distance - 5); // Base 5km included in base fare
+  const vehicleCost = vehicle.baseFare + (billedDistance * vehicle.ratePerKm);
   const pickupCharges = packingMaterialCharges + labourCost + vehicleCost;
   
   return {
