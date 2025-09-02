@@ -226,7 +226,7 @@ export const QuoteGenerator = () => {
             className="inline-block"
           >
             <img 
-              src="/lovable-uploads/9a403bd5-61d9-4343-a39e-4dea51cbec6b.png" 
+              src="/lovable-uploads/eaecb7b7-1d69-4fc7-8fe1-6b775a4b45ef.png" 
               alt="Storagians Logo" 
               className="h-16 md:h-20 max-w-xs mx-auto mb-6 object-contain hover:opacity-80 transition-opacity"
             />
