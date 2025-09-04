@@ -78,61 +78,53 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
     pdf.setFontSize(11);
     
     if (formData.storageType === 'household') {
-      // Household storage layout matching web UI
+      // Household storage layout matching web UI exactly
       pdf.setFont(undefined, 'normal');
       
-      // Rental Charges
-      pdf.text('Rental Charges:', 30, yPos);
-      pdf.setFont(undefined, 'bold');
-      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`Rs.${quote.rentalCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
-      yPos += 8;
-      
-      // Packing Material
+      // Total Volume (first, matching web order)
       pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
-      pdf.setFont(undefined, 'normal');
-      pdf.text('Packing Material Charges:', 30, yPos);
-      pdf.setFont(undefined, 'bold');
-      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`Rs.${quote.packingMaterialCharges?.toLocaleString()}`, 160, yPos, { align: 'right' });
-      yPos += 8;
-      
-      // Total Volume
-      pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
-      pdf.setFont(undefined, 'normal');
       pdf.text('Total Volume:', 30, yPos);
       pdf.setFont(undefined, 'bold');
       pdf.text(`${quote.totalVolume} cft`, 160, yPos, { align: 'right' });
-      yPos += 8;
-      
-      // Vehicle
-      pdf.setFont(undefined, 'normal');
-      pdf.text('Recommended Vehicle:', 30, yPos);
-      pdf.setFont(undefined, 'bold');
-      pdf.text(`${quote.recommendedVehicle} (Rs.${quote.vehicleCost?.toLocaleString()})`, 160, yPos, { align: 'right' });
-      yPos += 8;
-      
-      // Labour
-      pdf.setFont(undefined, 'normal');
-      pdf.text('Labour Required:', 30, yPos);
-      pdf.setFont(undefined, 'bold');
-      pdf.text(`${quote.labourCount} (Rs.${quote.labourCost?.toLocaleString()})`, 160, yPos, { align: 'right' });
       yPos += 10;
+      
+      // Monthly Storage Charges (matching web label exactly)
+      pdf.setFont(undefined, 'normal');
+      pdf.text('Monthly Storage Charges:', 30, yPos);
+      pdf.setFont(undefined, 'bold');
+      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      pdf.text(`₹${quote.rentalCharges?.toLocaleString()} + GST`, 160, yPos, { align: 'right' });
+      yPos += 6;
+      
+      // Discount note (matching web exactly)
+      pdf.setTextColor(mutedTextColor[0], mutedTextColor[1], mutedTextColor[2]);
+      pdf.setFontSize(9);
+      pdf.setFont(undefined, 'normal');
+      pdf.text('(Discounts & offers will be shared in the updated quote.)', 30, yPos);
+      yPos += 12;
       
       // Separator line
       pdf.setDrawColor(mutedTextColor[0], mutedTextColor[1], mutedTextColor[2]);
       pdf.line(30, yPos, 180, yPos);
       yPos += 10;
       
-      // Total Pickup/Drop-off Charges (highlighted)
-      pdf.setFont(undefined, 'bold');
-      pdf.setFontSize(13);
+      // Pickup/Drop-off Charges (matching web exactly)
+      pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
+      pdf.setFont(undefined, 'normal');
+      pdf.setFontSize(11);
       const chargeLabel = formData.deliveryMethod === 'third-party' ? 'Drop-off Charges:' : 'Pickup Charges:';
-      const chargeAmount = formData.deliveryMethod === 'third-party' ? '700' : quote.pickupCharges?.toLocaleString();
       pdf.text(chargeLabel, 30, yPos);
-      pdf.setTextColor(primaryGlowColor[0], primaryGlowColor[1], primaryGlowColor[2]);
-      pdf.setFontSize(16);
-      pdf.text(`Rs.${chargeAmount}`, 160, yPos, { align: 'right' });
+      pdf.setFont(undefined, 'bold');
+      pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+      pdf.text('To be confirmed', 160, yPos, { align: 'right' });
+      yPos += 6;
+      
+      // Pickup charges note (matching web exactly)
+      pdf.setTextColor(mutedTextColor[0], mutedTextColor[1], mutedTextColor[2]);
+      pdf.setFontSize(9);
+      pdf.setFont(undefined, 'normal');
+      pdf.text('(Includes packing, labour & transport — our team will share details shortly.)', 30, yPos);
+      yPos += 10;
       
     } else {
       // Document storage layout
