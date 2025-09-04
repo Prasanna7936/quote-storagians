@@ -399,8 +399,8 @@ Please contact me for booking.`;
         {/* Header */}
         <div className="text-center mb-8">
           <img 
-            src="/lovable-uploads/storagians-logo-transparent.png" 
-            alt="Company Logo" 
+            src="/lovable-uploads/eaecb7b7-1d69-4fc7-8fe1-6b775a4b45ef.png" 
+            alt="Storagians Logo" 
             className="h-16 md:h-20 max-w-xs mx-auto mb-6 object-contain"
           />
           <div className="w-16 h-16 mx-auto mb-4 bg-gradient-primary rounded-full flex items-center justify-center">
