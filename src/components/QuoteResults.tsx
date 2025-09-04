@@ -431,13 +431,13 @@ Please contact me for booking.`;
                   {/* Monthly Storage Charges */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-medium">Monthly Storage Charges (Estimated):</span>
+                      <span className="font-medium">Monthly Storage Charges:</span>
                       <span className="text-lg font-bold text-primary">
                         ₹{quote.rentalCharges?.toLocaleString()} + GST
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Discounts & offers will be shared in the updated quote.
+                      (Discounts & offers will be shared in the updated quote.)
                     </p>
                   </div>
                   
@@ -454,7 +454,7 @@ Please contact me for booking.`;
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Our team will review your packing material, labour and distance requirements and send you the updated quote shortly.
+                      (Includes packing, labour & transport — our team will share details shortly.)
                     </p>
                   </div>
                 </div>
