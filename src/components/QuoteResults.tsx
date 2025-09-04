@@ -40,8 +40,8 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
     pdf.setFillColor(backgroundLightColor[0], backgroundLightColor[1], backgroundLightColor[2]);
     pdf.rect(0, 0, 210, 297, 'F');
     
-    // Header with gradient-style background
-    pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    // Header with white background
+    pdf.setFillColor(255, 255, 255);
     pdf.roundedRect(15, 15, 180, 25, 3, 3, 'F');
     
     // Company logo in header - load and add image
@@ -52,13 +52,13 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
         // Add the logo centered in the header
         pdf.addImage(img, 'PNG', 85, 20, 40, 15); // centered position with appropriate size
       };
-      img.src = '/lovable-uploads/storagians-logo-transparent.png';
+      img.src = '/lovable-uploads/e21098a7-2133-48a4-a926-675f35fc94ab.png';
       
       // Add the logo immediately if possible (fallback approach)
-      pdf.addImage('/lovable-uploads/storagians-logo-transparent.png', 'PNG', 85, 20, 40, 15);
+      pdf.addImage('/lovable-uploads/e21098a7-2133-48a4-a926-675f35fc94ab.png', 'PNG', 85, 20, 40, 15);
     } catch (error) {
       // Fallback to text if image fails to load
-      pdf.setTextColor(255, 255, 255);
+      pdf.setTextColor(0, 0, 0);
       pdf.setFontSize(16);
       pdf.setFont(undefined, 'bold');
       pdf.text('Storage Quote', 105, 32, { align: 'center' });
