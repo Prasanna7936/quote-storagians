@@ -428,12 +428,17 @@ Please contact me for booking.`;
                     </span>
                   </div>
                   
-                  {/* Rental with GST */}
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Rental:</span>
-                    <span className="text-lg font-bold text-primary">
-                      ₹{quote.rentalCharges?.toLocaleString()} + GST
-                    </span>
+                  {/* Monthly Storage Charges */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium">Monthly Storage Charges (Estimated):</span>
+                      <span className="text-lg font-bold text-primary">
+                        ₹{quote.rentalCharges?.toLocaleString()} + GST
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Discounts & offers will be shared in the updated quote.
+                    </p>
                   </div>
                   
                   <Separator />
@@ -445,14 +450,11 @@ Please contact me for booking.`;
                         {formData.deliveryMethod === 'third-party' ? 'Drop-Off Charges:' : 'Pickup Charges:'}
                       </span>
                       <span className="text-2xl font-bold bg-gradient-secondary bg-clip-text text-transparent">
-                        ₹{formData.deliveryMethod === 'third-party' ? '700' : quote.pickupCharges?.toLocaleString()}
+                        To be confirmed
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {formData.deliveryMethod === 'third-party' 
-                        ? '(Handling and Inventory Charges)' 
-                        : '(Includes Packing Material, Transportation and Labour Charges)'
-                      }
+                      Our team will review your packing material, labour and distance requirements and send you the updated quote shortly.
                     </p>
                   </div>
                 </div>
