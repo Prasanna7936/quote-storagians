@@ -63,6 +63,32 @@ export const QuoteGenerator = () => {
       return;
     }
     
+    // Validate that at least one item is selected before moving to Shifting Options (step 6)
+    if (currentStep === 5) {
+      let hasItems = false;
+      
+      if (isDocumentFlow) {
+        // For document storage, check if box count is selected
+        hasItems = formData.documentBoxCount !== undefined;
+      } else {
+        // For household storage, check if any furniture, appliances, or boxes are selected
+        const furnitureTotal = Object.values(formData.furniture).reduce((sum, count) => sum + count, 0);
+        const appliancesTotal = Object.values(formData.appliances).reduce((sum, count) => sum + count, 0);
+        const boxesTotal = Object.values(formData.boxes).reduce((sum, count) => sum + count, 0);
+        
+        hasItems = furnitureTotal > 0 || appliancesTotal > 0 || boxesTotal > 0;
+      }
+      
+      if (!hasItems) {
+        toast({
+          title: "Please select at least one item to continue.",
+          description: "You must select items before proceeding to shifting options.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
     // Validate pickup location for step 7 when pickup method is selected
     if (currentStep === 7 && formData.deliveryMethod === 'pickup' && !formData.pickupLocation.trim()) {
       toast({
