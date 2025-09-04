@@ -44,15 +44,25 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
     pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
     pdf.roundedRect(15, 15, 180, 25, 3, 3, 'F');
     
-    // Company logo/name in header
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(18);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('STORAGIANS', 105, 32, { align: 'center' });
-    
-    // Subtitle
-    pdf.setFontSize(12);
-    pdf.text('Your Storage Quote', 105, 37, { align: 'center' });
+    // Company logo in header - load and add image
+    try {
+      // Create an image element to load the logo
+      const img = new Image();
+      img.onload = function() {
+        // Add the logo centered in the header
+        pdf.addImage(img, 'PNG', 85, 20, 40, 15); // centered position with appropriate size
+      };
+      img.src = '/lovable-uploads/storagians-logo-transparent.png';
+      
+      // Add the logo immediately if possible (fallback approach)
+      pdf.addImage('/lovable-uploads/storagians-logo-transparent.png', 'PNG', 85, 20, 40, 15);
+    } catch (error) {
+      // Fallback to text if image fails to load
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(16);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Storage Quote', 105, 32, { align: 'center' });
+    }
     
     let yPos = 60;
     
@@ -93,7 +103,7 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.text('Monthly Storage Charges:', 30, yPos);
       pdf.setFont(undefined, 'bold');
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`₹${quote.rentalCharges?.toLocaleString()} + GST`, 160, yPos, { align: 'right' });
+      pdf.text(`INR ${quote.rentalCharges?.toLocaleString()} + GST`, 160, yPos, { align: 'right' });
       yPos += 6;
       
       // Discount note (matching web exactly)
@@ -153,7 +163,7 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.text('Monthly Storage Rental:', 30, yPos);
       pdf.setFont(undefined, 'bold');
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`Rs.${quote.boxRate} per box`, 160, yPos, { align: 'right' });
+      pdf.text(`INR ${quote.boxRate} per box`, 160, yPos, { align: 'right' });
       yPos += 8;
       
       pdf.setTextColor(darkTextColor[0], darkTextColor[1], darkTextColor[2]);
@@ -161,7 +171,7 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       pdf.text('One-Time New Box Charge:', 30, yPos);
       pdf.setFont(undefined, 'bold');
       pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-      pdf.text(`Rs.${quote.boxChargeRate} per box`, 160, yPos, { align: 'right' });
+      pdf.text(`INR ${quote.boxChargeRate} per box`, 160, yPos, { align: 'right' });
     }
     
     yPos += 25;
@@ -310,7 +320,7 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(12);
     pdf.setFont(undefined, 'bold');
-    pdf.text('Contact: +9900056394/95 • info@storagians.com', 105, pageHeight - 15, { align: 'center' });
+    pdf.text('Contact: +9900056394/95', 105, pageHeight - 15, { align: 'center' });
     
     // Save the PDF
     pdf.save(`storage-quote-${formData.customerName.replace(/\s+/g, '-')}.pdf`);
@@ -323,11 +333,11 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
       const chargeAmount = formData.deliveryMethod === 'third-party' ? '700' : quote.pickupCharges?.toLocaleString();
       message = `Hi! I got a household storage quote:
 Total Volume: ${quote.totalVolume} cft
-Rental: ₹${quote.rentalCharges?.toLocaleString()} + GST
-${chargeType}: ₹${chargeAmount}
+Rental: INR ${quote.rentalCharges?.toLocaleString()} + GST
+${chargeType}: INR ${chargeAmount}
 Please contact me for booking.`;
     } else {
-      message = `Hi! I got a storage quote of ₹${quote.totalCost.toLocaleString()} for ${quote.totalItems} items (${quote.estimatedVolume} cubic feet). Monthly rate: ₹${quote.monthlyRate.toLocaleString()}. Please contact me for booking.`;
+      message = `Hi! I got a storage quote of INR ${quote.totalCost.toLocaleString()} for ${quote.totalItems} items (${quote.estimatedVolume} cubic feet). Monthly rate: INR ${quote.monthlyRate.toLocaleString()}. Please contact me for booking.`;
     }
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
@@ -379,18 +389,11 @@ Please contact me for booking.`;
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <a 
-            href="https://www.storagians.com" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-block"
-          >
-            <img 
-              src="/lovable-uploads/eaecb7b7-1d69-4fc7-8fe1-6b775a4b45ef.png" 
-              alt="Storagians Logo" 
-              className="h-16 md:h-20 max-w-xs mx-auto mb-6 object-contain hover:opacity-80 transition-opacity"
-            />
-          </a>
+          <img 
+            src="/lovable-uploads/storagians-logo-transparent.png" 
+            alt="Company Logo" 
+            className="h-16 md:h-20 max-w-xs mx-auto mb-6 object-contain"
+          />
           <div className="w-16 h-16 mx-auto mb-4 bg-gradient-primary rounded-full flex items-center justify-center">
             <Calculator className="w-8 h-8 text-primary-foreground" />
           </div>
@@ -425,7 +428,7 @@ Please contact me for booking.`;
                     <div className="flex justify-between items-center">
                       <span className="font-medium">Monthly Storage Charges:</span>
                       <span className="text-lg font-bold text-primary">
-                        ₹{quote.rentalCharges?.toLocaleString()} + GST
+                        INR {quote.rentalCharges?.toLocaleString()} + GST
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
@@ -474,13 +477,13 @@ Please contact me for booking.`;
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Monthly Storage Rental:</span>
                     <span className="text-lg font-bold text-primary">
-                      ₹{quote.boxRate} per box
+                      INR {quote.boxRate} per box
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="font-medium">One-Time New Box Charge:</span>
                     <span className="text-lg font-bold text-primary">
-                      ₹{quote.boxChargeRate} per box
+                      INR {quote.boxChargeRate} per box
                     </span>
                   </div>
                   
@@ -621,16 +624,16 @@ Please contact me for booking.`;
                   <div className="text-3xl font-bold text-success mb-2">5% OFF</div>
                   {formData.storageType === 'household' && quote.rentalCharges ? (
                     <div className="text-sm text-muted-foreground">
-                      <div>Monthly: ₹{Math.round(quote.rentalCharges * 0.95).toLocaleString()}</div>
-                      <div className="font-medium text-success">
-                        Save ₹{Math.round(quote.rentalCharges * 3 * 0.05).toLocaleString()}
+                       <div>Monthly: INR {Math.round(quote.rentalCharges * 0.95).toLocaleString()}</div>
+                       <div className="font-medium text-success">
+                         Save INR {Math.round(quote.rentalCharges * 3 * 0.05).toLocaleString()}
                       </div>
                     </div>
                   ) : (
                     <div className="text-sm text-muted-foreground">
-                      <div>Monthly: ₹{Math.round(quote.monthlyRate * 0.95).toLocaleString()}</div>
-                      <div className="font-medium text-success">
-                        Save ₹{Math.round(quote.monthlyRate * 3 * 0.05).toLocaleString()}
+                       <div>Monthly: INR {Math.round(quote.monthlyRate * 0.95).toLocaleString()}</div>
+                       <div className="font-medium text-success">
+                         Save INR {Math.round(quote.monthlyRate * 3 * 0.05).toLocaleString()}
                       </div>
                     </div>
                   )}
@@ -645,16 +648,16 @@ Please contact me for booking.`;
                   <div className="text-3xl font-bold text-success mb-2">10% OFF</div>
                   {formData.storageType === 'household' && quote.rentalCharges ? (
                     <div className="text-sm text-muted-foreground">
-                      <div>Monthly: ₹{Math.round(quote.rentalCharges * 0.9).toLocaleString()}</div>
-                      <div className="font-medium text-success">
-                        Save ₹{Math.round(quote.rentalCharges * 6 * 0.1).toLocaleString()}
+                       <div>Monthly: INR {Math.round(quote.rentalCharges * 0.9).toLocaleString()}</div>
+                       <div className="font-medium text-success">
+                         Save INR {Math.round(quote.rentalCharges * 6 * 0.1).toLocaleString()}
                       </div>
                     </div>
                   ) : (
                     <div className="text-sm text-muted-foreground">
-                      <div>Monthly: ₹{Math.round(quote.monthlyRate * 0.9).toLocaleString()}</div>
-                      <div className="font-medium text-success">
-                        Save ₹{Math.round(quote.monthlyRate * 6 * 0.1).toLocaleString()}
+                       <div>Monthly: INR {Math.round(quote.monthlyRate * 0.9).toLocaleString()}</div>
+                       <div className="font-medium text-success">
+                         Save INR {Math.round(quote.monthlyRate * 6 * 0.1).toLocaleString()}
                       </div>
                     </div>
                   )}
@@ -666,16 +669,16 @@ Please contact me for booking.`;
                   <div className="text-3xl font-bold text-success mb-2">15% OFF</div>
                   {formData.storageType === 'household' && quote.rentalCharges ? (
                     <div className="text-sm text-muted-foreground">
-                      <div>Monthly: ₹{Math.round(quote.rentalCharges * 0.85).toLocaleString()}</div>
-                      <div className="font-medium text-success">
-                        Save ₹{Math.round(quote.rentalCharges * 12 * 0.15).toLocaleString()}
+                       <div>Monthly: INR {Math.round(quote.rentalCharges * 0.85).toLocaleString()}</div>
+                       <div className="font-medium text-success">
+                         Save INR {Math.round(quote.rentalCharges * 12 * 0.15).toLocaleString()}
                       </div>
                     </div>
                   ) : (
                     <div className="text-sm text-muted-foreground">
-                      <div>Monthly: ₹{Math.round(quote.monthlyRate * 0.85).toLocaleString()}</div>
-                      <div className="font-medium text-success">
-                        Save ₹{Math.round(quote.monthlyRate * 12 * 0.15).toLocaleString()}
+                       <div>Monthly: INR {Math.round(quote.monthlyRate * 0.85).toLocaleString()}</div>
+                       <div className="font-medium text-success">
+                         Save INR {Math.round(quote.monthlyRate * 12 * 0.15).toLocaleString()}
                       </div>
                     </div>
                   )}
