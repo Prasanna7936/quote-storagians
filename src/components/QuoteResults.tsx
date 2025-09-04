@@ -317,10 +317,19 @@ export const QuoteResults = ({ quote, formData, onReset }: QuoteResultsProps) =>
     pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
     pdf.rect(0, pageHeight - 25, 210, 25, 'F');
     
+    // Footer text - all in single line with different alignments
     pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(12);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('Contact: +9900056394/95', 105, pageHeight - 15, { align: 'center' });
+    pdf.setFontSize(10);
+    pdf.setFont(undefined, 'normal');
+    
+    // Left aligned text
+    pdf.text('Contact: +91-9900056394', 20, pageHeight - 15, { align: 'left' });
+    
+    // Center aligned text
+    pdf.text('www.storagians.com', 105, pageHeight - 15, { align: 'center' });
+    
+    // Right aligned text
+    pdf.text('info@storagians.com', 190, pageHeight - 15, { align: 'right' });
     
     // Save the PDF
     pdf.save(`storage-quote-${formData.customerName.replace(/\s+/g, '-')}.pdf`);
